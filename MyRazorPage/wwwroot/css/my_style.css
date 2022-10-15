@@ -1,0 +1,24 @@
+﻿.content-main {
+    flex-wrap: wrap;
+}
+
+.product {
+    margin: 10px;
+}
+
+#content-left ul li.active {
+    background-color: sienna;
+    cursor: pointer;
+    color: white;
+}
+
+input[type="submit"], input[type="button"] {
+    width: 100%;
+    background-color: brown;
+    color: #fff;
+    margin-bottom: 15px;
+    line-height: 40px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}

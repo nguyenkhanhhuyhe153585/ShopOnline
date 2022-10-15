@@ -1,0 +1,83 @@
+﻿@page
+@model MyRazorPage.Pages.Categories.IndexModel
+@{
+    var location = new Uri($"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}");
+
+    var url = location.AbsoluteUri;
+}
+
+<div id="content-left">
+    <h3>CATEGORY</h3>
+    <ul>
+        @foreach (var cate in Model.categories)
+        {
+            <a href="~/categories/index?categoryId=@cate.CategoryId">
+            <li>@cate.CategoryName</li></a>
+        }
+    </ul>
+</div>
+<div id="content-right">
+    <div style="margin: 5%">
+        <select id="sort-by" onchange="SelectSortBy(this)">
+            <option value="">
+            </option>
+            <option id="sort-opt-priceAsc" value="priceAsc">
+                Price Ascending
+            </option>
+            <option id="sort-opt-priceDesc" value="priceDesc">
+                Price Descending
+            </option>
+        </select>
+    </div>
+    <div class="content-main">
+        @foreach (var pro in Model.products)
+        {
+            <div class="product">
+                <a href="~/products/detail"><img src="~/img/1.jpg" width="100%" /></a>
+                <div class="name"><a href="~/product/detail?productId=@pro.ProductId">@pro.ProductName</a></div>
+                <div class="price">$@pro.UnitPrice</div>
+                <div><a href="~/accouns/cart/addtocart?productId=@pro.ProductId&isBuyNow=true">Buy now</a></div>
+            </div>
+        }
+    </div>
+
+    <div>
+        @for (int i = 1; i <= Model.totalPage; i++)
+        {
+            <a onclick="GetPagingAndSortingURL(@i)" href="javascript:void">@i</a>
+        }
+    </div>
+
+</div>
+<script>
+    var sortOptPriceDesc = document.getElementById("sort-opt-priceDesc");
+    var sortOptPriceAsc = document.getElementById("sort-opt-priceAsc");
+    var url = new URL(window.location.href);
+    if (url.searchParams.get("sortBy").match("priceDesc")) {
+        sortOptPriceDesc.selected = true;
+    } else if (url.searchParams.get("sortBy").match("priceAsc")) {
+        sortOptPriceAsc.selected = true;
+    }
+    function GetPagingAndSortingURL(pageNum) {
+        var url = new URL(window.location.href);
+        if (url.searchParams.has("pageNum")) {
+            url.searchParams.set("pageNum", pageNum);
+        } else {
+            url.searchParams.append("pageNum", pageNum);
+        }
+        window.location.href = url;
+        return url;
+    }
+    function SelectSortBy(ele) {
+        var url = new URL(window.location.href);
+        if (ele.value.length === 0) {
+            url.searchParams.delete("sortBy");
+        }
+        if (url.searchParams.has("sortBy")) {
+            url.searchParams.set("sortBy", ele.value);
+        } else {
+            url.searchParams.append("sortBy", ele.value);
+        }
+        window.location.href = url;
+    }
+</script>

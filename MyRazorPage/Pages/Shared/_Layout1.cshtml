@@ -1,0 +1,53 @@
+﻿@{
+    var cart = SessionUtils.GetCartInfo(Context.Session);
+
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index</title>
+    <link href="~/css/style.css" rel="stylesheet" />
+    <link href="~/css/my_style.css" rel="stylesheet" />
+    @* <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">*@
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="~/js/microsoft/signalr/dist/browser/signalr.js">
+    </script>
+    <script src="~/js/script.js"></script>
+
+</head>
+<body>
+    <div class="container" id="container">
+        <div id="header">
+            <div id="logo">
+                <a href="~/index"><img src="~/img/logo.png" /></a>
+            </div>
+            <div id="banner">
+                <ul>
+                    <li><a href="~/accounts/cart">Cart: @cart.Count()</a></li>
+                    @if (Context.Session.GetString("CustSession") == null)
+                    {
+                        <li><a href="~/accounts/signin">SignIn</a></li>
+                        <li><a href="~/accounts/signup">SignUp</a></li>
+                    }
+                    else
+                    {
+
+                        <li><a href="~/accounts/profile">Profile</a></li>
+                        <li><a href="~/accounts/signin">SignOut</a></li>
+                    }
+                </ul>
+            </div>
+        </div>
+        <div id="content">
+            @RenderBody()
+        </div>
+        <div id="footer">footer</div>
+    </div>
+
+</body>
+@RenderSection("scripts", required: false)
+</html>
