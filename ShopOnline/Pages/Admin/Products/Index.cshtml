@@ -1,8 +1,6 @@
 ﻿@page
 @model ShopOnline.Pages.Admin.Products.IndexModel
-
 @{
-    ViewData["Title"] = "Index";
 }
 
 <div id="content-left">
@@ -12,7 +10,7 @@
         <a href="order.html">
         <li>Orders</li></a>
         <a href="product.html">
-        <li>Products</li></a>
+        <li class="active">Products</li></a>
         <a href="#">
         <li>Customers</li></a>
     </ul>
@@ -24,21 +22,20 @@
             <div id="product-title-header">
                 <div id="product-title-1" style="width: 25%;">
                     <b>Filter   Catetory:</b>
-                    <form>
-                        <select name="ddlCategory">
-                            <option value="catid1">--- Select ---</option>
-                            <option value="catid1">Smart Phone</option>
-                            <option value="catid2">Computer</option>
-                            <option value="catid3">Television</option>
-                            <option value="catid4">Electronic</option>
+                    <form onsubmit="filterNsearch(event, 'select-filter-category', 'categoryId')">
+                        <select name="ddlCategory" id="select-filter-category" title="category">
+                            <option value="0">--- Select ---</option>
+                            @foreach(var c in Model.categories){
+                                <option value="@c.CategoryId">@c.CategoryName</option>
+                            }                       
                         </select>
                         <input type="submit" value="Filter">
                     </form>
                 </div>
                 <div id="product-title-2" style="width: 55%;">
-                    <form>
-                        <input type="text" name="txtSearch" placeholder="Enter product name to search" />
-                        <input type="submit" value="Search"
+                    <form onsubmit="filterNsearch(event, 'text-search-productName', 'search')">
+                        <input type="text" name="txtSearch" placeholder="Enter product name to search" id="text-search-productName"/>
+                        <input type="submit" value="Search" />
                     </form>
                 </div>
                 <div id="product-title-3" style="width: 20%;">
@@ -61,7 +58,22 @@
                         <th>Discontinued</th>
                         <th></th>
                     </tr>
-                    <tr>
+                    @foreach(var p in Model.products){
+                        <tr>
+                            <td><a href="order-detail.html?id=5">#@p.ProductId</a></td>
+                            <td>@p.ProductName</td>
+                            <td>@p.UnitPrice</td>
+                            <td>@p.QuantityPerUnit</td>
+                            <td>@p.UnitsInStock</td>
+                            <td>@p.Category.CategoryName</td>
+                            <td>@p.Discontinued</td>
+                            <td>
+                                <a href="~/admin/products/update?id=@p.ProductId">Edit</a> &nbsp; | &nbsp;
+                                <a href="~/admin/products/delete?id=@p.ProductId">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                   @* <tr>
                         <td><a href="order-detail.html?id=5">#5</a></td>
                         <td>IPhone 14 Pro Max</td>
                         <td>2000</td>
@@ -125,19 +137,11 @@
                             <a href="edit.html?id=5">Edit</a> &nbsp; | &nbsp;
                             <a href="delete.html?id=5">Delete</a>
                         </td>
-                    </tr>
+                    </tr>*@
                 </table>
             </div>
             <div id="paging">
-                <div class="pagination">
-                    <a href="#">&laquo;</a>
-                    <a href="#">1</a>
-                    <a href="#" class="active">2</a>
-                    <a href="#">3</a>
-                    <a href="#">4</a>
-                    <a href="#">5</a>
-                    <a href="#">6</a>
-                    <a href="#">&raquo;</a>
+                <div class="pagination" id="pagination">
                 </div>
             </div>
         </div>
@@ -152,4 +156,6 @@
             window.location.reload();
         })
     });
+
+    paging(@Model.totalPage);
 </script>

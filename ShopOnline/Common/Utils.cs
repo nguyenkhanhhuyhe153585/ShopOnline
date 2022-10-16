@@ -36,6 +36,7 @@ namespace ShopOnline.Common
 
         public static (IQueryable<T> query, decimal totalPage) Page<T>(IQueryable<T> en, int pageSize, int page)
         {
+            page = PageLimit(page);
             return (en.Skip(page * pageSize).Take(pageSize), Math.Ceiling((decimal)en.Count() / pageSize));
         }
 

@@ -17,7 +17,6 @@ input[type="submit"], input[type="button"] {
     background-color: brown;
     color: #fff;
     margin-bottom: 15px;
-    line-height: 40px;
     border-radius: 5px;
     border: none;
     cursor: pointer;
