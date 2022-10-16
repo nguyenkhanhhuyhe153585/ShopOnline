@@ -1,0 +1,75 @@
+﻿@page
+@model ShopOnline.Pages.Admin.Orders.DetailModel
+@{
+}
+<div id="content-left">
+    <ul>
+        <a href="dashboard.html">
+        <li>Dashboard</li></a>
+        <a href="order.html">
+        <li class="active">Orders</li></a>
+        <a href="product.html">
+        <li>Products</li></a>
+        <a href="#">
+        <li>Customers</li></a>
+    </ul>
+</div>
+<div id="content-right">
+    <div class="path-admin">ORDER DETAIL</b></div>
+    <div class="content-main">
+        <div id="content-main-dashboard">
+            <div>
+                <div class="profile-order-title">
+                    <div class="profile-order-title-left">
+                        <div>OrderID: #@Model.orderInfo.OrderId</div>
+                        <div>Order creation date: @Model.orderInfo.OrderDate</div>
+                    </div>
+                    <div class="profile-order-title-right">
+
+                        @if (@Model.orderInfo.ShippedDate == null && @Model.orderInfo.RequiredDate == null)
+                        {
+                            <span style="color: red;">Order canceled</span>
+                        }
+                        else if (@Model.orderInfo.ShippedDate == null && @Model.orderInfo.RequiredDate != null)
+                        {
+                            <span style="color: blue;">Pending | <a href="~/cancelorder?orderId=@Model.orderInfo.OrderId">Cancel</a></span>
+                        }
+                        else if (@Model.orderInfo.ShippedDate != null && @Model.orderInfo.RequiredDate != null)
+                        {
+                            <span style="color: green;">Completed</span>
+                        }
+
+                    </div>
+                </div>
+                @foreach (var od in Model.orderInfo.OrderDetails)
+                {
+                    <div class="profile-order-content" style="background-color: white;">
+                        <div class="profile-order-content-col1">
+                            <a href="detail.html"><img src="~/img/2.jpg" width="100%" /></a>
+                        </div>
+                        <div class="profile-order-content-col2">@od.Product.ProductName</div>
+                        <div class="profile-order-content-col3">Quantity: @od.Quantity</div>
+                        <div class="profile-order-content-col4">@od.UnitPrice $</div>
+                    </div>
+                }
+                @*<div class="profile-order-content" style="background-color: white;">
+                <div class="profile-order-content-col1">
+                <a href="detail.html"><img src="img/2.jpg" width="100%"/></a>
+                </div>
+                <div class="profile-order-content-col2">Product 12</div>
+                <div class="profile-order-content-col3">Quantity: 1</div>
+                <div class="profile-order-content-col4">1000 $</div>
+                </div>
+                <div class="profile-order-content" style="background-color: white;">
+                <div class="profile-order-content-col1">
+                <a href="detail.html"><img src="img/1.jpg" width="100%"/></a>
+                </div>
+                <div class="profile-order-content-col2">Product 1</div>
+                <div class="profile-order-content-col3">Quantity: 2</div>
+                <div class="profile-order-content-col4">2000 $</div>
+                </div>*@
+
+            </div>
+        </div>
+    </div>
+</div>
