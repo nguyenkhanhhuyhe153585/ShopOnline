@@ -24,15 +24,13 @@ namespace ShopOnline.Pages.Admin.Products
 
         public IActionResult OnGet()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryId");
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName");
             return Page();
         }
 
         [BindProperty]
         public Product Product { get; set; }
 
-
-        // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)

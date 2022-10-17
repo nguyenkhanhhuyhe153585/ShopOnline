@@ -32,7 +32,7 @@ namespace ShopOnline.Pages.Admin.Products
                 return NotFound();
             }
 
-            var product = await _context.Products.FirstOrDefaultAsync(m => m.ProductId == id);
+            var product = await _context.Products.Include(e=>e.Category).SingleOrDefaultAsync(m => m.ProductId == id);
 
             if (product == null)
             {

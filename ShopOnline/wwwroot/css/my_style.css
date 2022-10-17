@@ -20,4 +20,5 @@ input[type="submit"], input[type="button"] {
     border-radius: 5px;
     border: none;
     cursor: pointer;
+    padding: 5px;
 }

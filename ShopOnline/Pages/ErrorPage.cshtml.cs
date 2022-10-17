@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace ShopOnline.Pages.Admin
+namespace ShopOnline.Pages
 {
-    public class SignOutModel : PageModel
+    public class ErrorPageModel : PageModel
     {
         public void OnGet()
         {

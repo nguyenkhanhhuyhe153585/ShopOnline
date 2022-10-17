@@ -30,7 +30,11 @@ namespace ShopOnline.Common
 
         public static bool isAdmin(Account account)
         {
-            return account.Role == 2;
+            if(account == null)
+            {
+                return false;
+            }
+            return account.Role == 1;
         }
     }
 }

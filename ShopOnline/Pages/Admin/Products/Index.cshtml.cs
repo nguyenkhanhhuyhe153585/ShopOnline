@@ -27,6 +27,8 @@ namespace ShopOnline.Pages.Admin.Products
         private int pageSize = 10;
         public async Task OnGetAsync(int categoryId, string search, int pageNum)
         {
+            ViewData["categoryId"] = categoryId;
+            ViewData["search"] = search;
             if (search == null)
             {
                 search = "";

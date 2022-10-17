@@ -5,13 +5,13 @@
 
 <div id="content-left">
     <ul>
-        <a href="dashboard.html">
-        <li>Dashboard</li></a>
-        <a href="order.html">
+        <a href="~/admin/dashboard" >
+        <li >Dashboard</li></a>
+        <a href="~/admin/orders">
         <li>Orders</li></a>
-        <a href="product.html">
+        <a href="javascript:void">
         <li class="active">Products</li></a>
-        <a href="#">
+        <a href="~/admin/customers">
         <li>Customers</li></a>
     </ul>
 </div>
@@ -26,6 +26,10 @@
                         <select name="ddlCategory" id="select-filter-category" title="category">
                             <option value="0">--- Select ---</option>
                             @foreach(var c in Model.categories){
+                                if((int) ViewData["categoryId"] == c.CategoryId){
+                                    <option value="@c.CategoryId" selected>@c.CategoryName</option>
+                                    continue;
+                                }
                                 <option value="@c.CategoryId">@c.CategoryName</option>
                             }                       
                         </select>
@@ -34,12 +38,12 @@
                 </div>
                 <div id="product-title-2" style="width: 55%;">
                     <form onsubmit="filterNsearch(event, 'text-search-productName', 'search')">
-                        <input type="text" name="txtSearch" placeholder="Enter product name to search" id="text-search-productName"/>
+                        <input type="text" name="txtSearch" placeholder="Enter product name to search" id="text-search-productName" value="@ViewData["search"]"/>
                         <input type="submit" value="Search" />
                     </form>
                 </div>
                 <div id="product-title-3" style="width: 20%;">
-                    <a href="create-product.html">Create a new Product</a>
+                    <a href="~/admin/products/create">Create a new Product</a>
                     <form action="">
                         <label for="upload-file">Import .xls or .xlsx file</label>
                         <input type="file" name="file" id="upload-file" />

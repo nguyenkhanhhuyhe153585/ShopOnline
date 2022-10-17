@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -26,6 +27,8 @@ namespace ShopOnline.Pages.Admin.Products
         [BindProperty]
         public Product Product { get; set; } = default!;
 
+        private string pageBeforeUrl = string.Empty;
+
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             if (id == null || _context.Products == null)
@@ -33,13 +36,17 @@ namespace ShopOnline.Pages.Admin.Products
                 return NotFound();
             }
 
+            pageBeforeUrl = Request.GetDisplayUrl();
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.WriteLine("URL" + pageBeforeUrl, Console.BackgroundColor);
+
             var product = await _context.Products.FirstOrDefaultAsync(m => m.ProductId == id);
             if (product == null)
             {
                 return NotFound();
             }
             Product = product;
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryId");
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName");
             return Page();
         }
 
@@ -70,8 +77,7 @@ namespace ShopOnline.Pages.Admin.Products
                     throw;
                 }
             }
-
-            return RedirectToPage("./Index");
+            return Redirect("/admin/products");
         }
 
         private bool ProductExists(int id)

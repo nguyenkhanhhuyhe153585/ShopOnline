@@ -18,7 +18,8 @@ namespace ShopOnline.Pages.Admin.Orders
 
         public void OnGet(DateTime? txtStartOrderDate, DateTime? txtEndOrderDate, int pageNum)
         {
-            IQueryable<Order> query = dBContext.Orders.Where(e => (txtStartOrderDate == null ? true : e.OrderDate >= txtStartOrderDate)
+            IQueryable<Order> query = dBContext.Orders.Where(e => 
+                    (txtStartOrderDate == null ? true : e.OrderDate >= txtStartOrderDate)
                 && (txtEndOrderDate == null ? true : e.OrderDate <= txtEndOrderDate));
             (query, totalPage) = Utils.Page(query, pageSize, pageNum);
 

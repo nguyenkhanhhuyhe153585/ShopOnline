@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using NuGet.Protocol;
+using ShopOnline.Common;
 using ShopOnline.Models;
 
 namespace ShopOnline.Pages.Admin
@@ -23,8 +25,13 @@ namespace ShopOnline.Pages.Admin
 
         public string orders12monthsJson;
 
-        public void OnGet()
+        public IActionResult OnGet()
         {
+            Account currentUser = SessionUtils.GetAccountFromSession(HttpContext.Session);
+            if (!SessionUtils.isAdmin(currentUser))
+            {
+                return Redirect("/errorpage");
+            }
             DateTime currentDateTime = DateTime.Now;
 
             DateTime monday, sunday;
@@ -66,7 +73,7 @@ namespace ShopOnline.Pages.Admin
 
                      ).ToList().ToJson();
 
-
+            return Page();
         }
 
 

@@ -4,58 +4,48 @@
 @{
     ViewData["Title"] = "Update";
 }
-
-<h1>Update</h1>
-
-<h4>Product</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Product.ProductId" />
-            <div class="form-group">
-                <label asp-for="Product.ProductName" class="control-label"></label>
-                <input asp-for="Product.ProductName" class="form-control" />
-                <span asp-validation-for="Product.ProductName" class="text-danger"></span>
+<div id="content-left">
+    <ul>
+        <a href="~/admin/dashboard" >
+        <li >Dashboard</li></a>
+        <a href="~/admin/orders">
+        <li>Orders</li></a>
+        <a href="javascript:void">
+        <li class="active">Products</li></a>
+        <a href="~/admin/customers">
+        <li>Customers</li></a>
+    </ul>
+</div>
+<div id="content-right">
+    <div class="path-admin">CREATE A NEW PRODUCT</b></div>
+    <div class="content-main">
+        <form id="content-main-product" method="post">
+            <div class="content-main-1">
+                <input type="hidden" asp-for="Product.ProductId"></input>
+                <label>Product name (*):</label><br />
+                <input type="text" id="" asp-for="Product.ProductName"><br />
+                <span class="msg-error" asp-validation-for="Product.ProductName"></span><br />
+                <label>Unit price:</label><br />
+                <input type="text" id="" asp-for="Product.UnitPrice"><br />
+                <label>Quantity per unit:</label><br />
+                <input type="text" id="" asp-for="Product.QuantityPerUnit"><br />
+                <label>Units in stock (*):</label><br />
+                <input type="text" id="" asp-for="Product.UnitsInStock"><br />
+                <span class="msg-error" asp-validation-for="Product.UnitsInStock"></span><br />
             </div>
-            <div class="form-group">
-                <label asp-for="Product.CategoryId" class="control-label"></label>
-                <select asp-for="Product.CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
-                <span asp-validation-for="Product.CategoryId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Product.QuantityPerUnit" class="control-label"></label>
-                <input asp-for="Product.QuantityPerUnit" class="form-control" />
-                <span asp-validation-for="Product.QuantityPerUnit" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Product.UnitPrice" class="control-label"></label>
-                <input asp-for="Product.UnitPrice" class="form-control" />
-                <span asp-validation-for="Product.UnitPrice" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Product.UnitsInStock" class="control-label"></label>
-                <input asp-for="Product.UnitsInStock" class="form-control" />
-                <span asp-validation-for="Product.UnitsInStock" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Product.UnitsOnOrder" class="control-label"></label>
-                <input asp-for="Product.UnitsOnOrder" class="form-control" />
-                <span asp-validation-for="Product.UnitsOnOrder" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Product.ReorderLevel" class="control-label"></label>
-                <input asp-for="Product.ReorderLevel" class="form-control" />
-                <span asp-validation-for="Product.ReorderLevel" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Product.Discontinued" /> @Html.DisplayNameFor(model => model.Product.Discontinued)
-                </label>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+            <div class="content-main-1">
+                <label>Category (*):</label><br />
+                <select asp-for="Product.CategoryId" asp-items="(SelectList) @ViewData["CategoryId"]">
+                </select>
+                <br />
+                <span class="msg-error"></span><br />
+                <label>Reorder level:</label><br />
+                <input type="text" name="txtReorderLevel" id="" disabled asp-for="Product.ReorderLevel"><br />
+                <label>Units on order:</label><br />
+                <input type="text" name="txtUnitsOnOrder" id="" disabled asp-for="Product.UnitsOnOrder"><br />
+                <label>Discontinued:</label><br />
+                <input type="checkbox" id="" asp-for="Product.Discontinued"><br />
+                <input type="submit" value="Save" />
             </div>
         </form>
     </div>

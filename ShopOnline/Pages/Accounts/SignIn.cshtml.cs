@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ShopOnline.Common;
 using ShopOnline.Models;
 using System.Text.Json;
 
@@ -45,7 +46,12 @@ namespace ShopOnline.Pages.Accounts
                     {
                         HttpContext.Session.SetString("CustSession", JsonSerializer.Serialize(account));
 
-                        return Redirect("~/index");
+                        if (SessionUtils.isAdmin(account))
+                        {
+                            return Redirect("/admin/dashboard");
+                        }
+
+                        return Redirect("/index");
                     }
                     ViewData["msg"] = "Invalid Password";
                     return Page();

@@ -15,19 +15,16 @@ namespace ShopOnline.Pages
             this.dBContext = dBContext;
         }
 
-        [BindProperty]
-        public List<Product> Hot { get; set; }
-        [BindProperty]
-        public List<Product> BestSale { get; set; }
-        [BindProperty]
-        public List<Product> New { get; set; }
-        [BindProperty]
-        public List<Category> Categories { get; set; }
+        public List<Product> Hot = new List<Product>();
+        public List<Product> BestSale = new List<Product>();
+        public List<Product> New = new List<Product>();
+      
+        public List<Category> Categories = new List<Category>();
 
-        public IActionResult OnGet(int? categoryId)
+        public IActionResult OnGet(int categoryId)
         {
             Categories = dBContext.Categories.ToList();
-            if (categoryId == null)
+            if (true)
             {
                 Hot = (from orderdetail in dBContext.OrderDetails
                        join product in dBContext.Products on orderdetail.ProductId
@@ -51,30 +48,30 @@ namespace ShopOnline.Pages
                        orderby product.ProductId descending
                        select product).Take(4).ToList();
             }
-            else
-            {
-                Hot = (from orderdetail in dBContext.OrderDetails
-                       join product in dBContext.Products on orderdetail.ProductId
-                       equals product.ProductId
-                       join order in dBContext.Orders on orderdetail.OrderId equals order.OrderId
-                       where product.CategoryId.Equals(categoryId) && product.UnitsInStock > 0 && product.Discontinued == false
-                       group order by product.ProductId into g
-                       orderby g.Count() descending
-                       select new { ProductId = g.Key }
-                        ).Take(4).Join(dBContext.Products, e => e.ProductId, i => i.ProductId, (e, i) => i).ToList();
-                BestSale = (from orderdetail in dBContext.OrderDetails
-                            join product in dBContext.Products on orderdetail.ProductId
-                            equals product.ProductId
-                            where product.CategoryId.Equals(categoryId) && product.UnitsInStock > 0 && product.Discontinued == false
-                            group orderdetail by product.ProductId into g
-                            orderby g.Sum(g => g.Quantity) descending
-                            select new { ProductId = g.Key }
-                        ).Take(4).Join(dBContext.Products, e => e.ProductId, i => i.ProductId, (e, i) => i).ToList();
-                New = (from product in dBContext.Products
-                       where product.CategoryId.Equals(categoryId) && product.UnitsInStock > 0 && product.Discontinued == false
-                       orderby product.ProductId descending
-                       select product).Take(4).ToList();
-            }
+            //else
+            //{
+            //    Hot = (from orderdetail in dBContext.OrderDetails
+            //           join product in dBContext.Products on orderdetail.ProductId
+            //           equals product.ProductId
+            //           join order in dBContext.Orders on orderdetail.OrderId equals order.OrderId
+            //           where product.CategoryId.Equals(categoryId) && product.UnitsInStock > 0 && product.Discontinued == false
+            //           group order by product.ProductId into g
+            //           orderby g.Count() descending
+            //           select new { ProductId = g.Key }
+            //            ).Take(4).Join(dBContext.Products, e => e.ProductId, i => i.ProductId, (e, i) => i).ToList();
+            //    BestSale = (from orderdetail in dBContext.OrderDetails
+            //                join product in dBContext.Products on orderdetail.ProductId
+            //                equals product.ProductId
+            //                where product.CategoryId.Equals(categoryId) && product.UnitsInStock > 0 && product.Discontinued == false
+            //                group orderdetail by product.ProductId into g
+            //                orderby g.Sum(g => g.Quantity) descending
+            //                select new { ProductId = g.Key }
+            //            ).Take(4).Join(dBContext.Products, e => e.ProductId, i => i.ProductId, (e, i) => i).ToList();
+            //    New = (from product in dBContext.Products
+            //           where product.CategoryId.Equals(categoryId) && product.UnitsInStock > 0 && product.Discontinued == false
+            //           orderby product.ProductId descending
+            //           select product).Take(4).ToList();
+            //}
             return Page();
         }
     }
