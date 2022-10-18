@@ -5,16 +5,16 @@ namespace ShopOnline.Common
 {
     public class SessionUtils
     {
-        public static List<OrderDetail> GetCartInfo(ISession session)
+        public static Dictionary<int, OrderDetail> GetCartInfo(ISession session)
         {
             string cart = session.GetString("Cart");
             if (cart == null)
             {
-                return new List<OrderDetail>();
+                return new Dictionary<int, OrderDetail>();
             }
             else
             {
-                return JsonSerializer.Deserialize<List<OrderDetail>>(cart);
+                return JsonSerializer.Deserialize<Dictionary<int, OrderDetail>>(cart);
             }
         }
 

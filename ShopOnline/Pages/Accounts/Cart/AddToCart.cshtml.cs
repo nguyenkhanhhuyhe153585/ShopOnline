@@ -18,7 +18,7 @@ namespace ShopOnline.Pages.Accounts.Cart
         }
 
         public Customer Customer { get; set; }
-        public List<OrderDetail> orderDetailsCard;
+        public Dictionary<int, OrderDetail> orderDetailsCard;
 
         public IActionResult OnGet(int productId, bool isBuyNow)
         {
@@ -41,8 +41,7 @@ namespace ShopOnline.Pages.Accounts.Cart
             {
                 return null;
             }
-            OrderDetail orderDetailFromCart = orderDetailsCard.SingleOrDefault(e => e.ProductId == productId);
-            if (orderDetailFromCart == null)
+            if (!orderDetailsCard.ContainsKey(productId))
             {
                 OrderDetail orderDetail = new OrderDetail
                 {
@@ -51,10 +50,11 @@ namespace ShopOnline.Pages.Accounts.Cart
                     Quantity = 1,
                     UnitPrice = (decimal)productFromDB.UnitPrice
                 };
-                orderDetailsCard.Add(orderDetail);
-            }
+                orderDetailsCard.Add(productId, orderDetail);
+            }          
             else
             {
+                OrderDetail orderDetailFromCart = orderDetailsCard[productId];
                 orderDetailFromCart.Quantity++;
             }
             HttpContext.Session.SetString("Cart", JsonSerializer.Serialize(orderDetailsCard));

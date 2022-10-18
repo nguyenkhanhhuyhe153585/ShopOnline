@@ -61,7 +61,7 @@ namespace ShopOnline.Pages.Admin.Products
                 await signalR.Clients.All.SendAsync("LoadProductOnChange");
             }
 
-            return RedirectToPage("./Index");
+            return RedirectToPage("./index");
         }
     }
 }

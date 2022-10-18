@@ -3,32 +3,27 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using ShopOnline.Common;
 using ShopOnline.Models;
-using System.Linq;
 
 namespace ShopOnline.Pages.Accounts.Profile
 {
-    public class OrderHistoryModel : PageModel
+    public class CanceledOrderModel : PageModel
     {
-        private PRN221DBContext dBContext;
+        private readonly PRN221DBContext dBContext;
 
-        public OrderHistoryModel(PRN221DBContext dBContext)
+        public CanceledOrderModel(PRN221DBContext dBContext)
         {
             this.dBContext = dBContext;
         }
-
-
-        public List<Order> Orders { get; set; }
-
-        public string CustomerContactName { get; set; }
-
+        public List<Order> Orders;
+        public string CustomerContactName;
         public IActionResult OnGet()
-
         {
             Account account = Utils.GetAccountFromSession(HttpContext.Session);
             if (account != null)
             {
                 Orders = dBContext.Orders.Include(e => e.OrderDetails).ThenInclude(e => e.Product)
-                    .Where(e => e.CustomerId == account.CustomerId).OrderByDescending(e=>e.OrderDate).ToList();
+                    .Where(e => e.CustomerId == account.CustomerId && (e.RequiredDate == null && e.ShippedDate == null))
+                    .OrderByDescending(e => e.OrderDate).ToList();
 
 
                 var customerFromDB = dBContext.Customers.Find(account.CustomerId);
@@ -42,7 +37,6 @@ namespace ShopOnline.Pages.Accounts.Profile
             {
                 return Redirect("/accounts/signin");
             }
-
         }
     }
 }

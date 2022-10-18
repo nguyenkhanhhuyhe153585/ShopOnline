@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using ShopOnline.Common;
 using ShopOnline.Models;
 
@@ -20,10 +21,9 @@ namespace ShopOnline.Pages.Admin.Orders
         {
             IQueryable<Order> query = dBContext.Orders.Where(e => 
                     (txtStartOrderDate == null ? true : e.OrderDate >= txtStartOrderDate)
-                && (txtEndOrderDate == null ? true : e.OrderDate <= txtEndOrderDate));
-            (query, totalPage) = Utils.Page(query, pageSize, pageNum);
+                && (txtEndOrderDate == null ? true : e.OrderDate <= txtEndOrderDate)).OrderByDescending(e=>e.OrderDate);          (query, totalPage) = Utils.Page(query, pageSize, pageNum);
 
-            orders = query.ToList();
+            orders = query.Include(e => e.Employee).Include(e => e.Customer).ToList();
         }
     }
 }

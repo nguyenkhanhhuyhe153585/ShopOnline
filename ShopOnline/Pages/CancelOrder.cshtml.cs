@@ -22,25 +22,24 @@ namespace ShopOnline.Pages
         {
             if (orderId == null)
             {
-                return NotFound();
+                return Redirect("/errorpage?code=403");
             }
             Account currentUser = SessionUtils.GetAccountFromSession(HttpContext.Session);
             if(currentUser == null)
             {
-                return RedirectToPage("/accounts/signin");
+                return Redirect("/accounts/signin");
             }
             
             Order canceleOrder = db.Orders.Where(o => o.OrderId == orderId).SingleOrDefault();
-            if(!canceleOrder.CustomerId.Equals(currentUser.CustomerId) || !SessionUtils.isAdmin(currentUser))
+            if(canceleOrder.CustomerId.Equals(currentUser.CustomerId) || SessionUtils.isAdmin(currentUser))
             {
-                return Unauthorized();
+                canceleOrder.RequiredDate = null;
+                db.Orders.Update(canceleOrder);
+                await db.SaveChangesAsync();
+                await signalR.Clients.All.SendAsync("RefreshOrderList");
+                return Redirect(Request.Headers.Referer);             
             }
-
-            canceleOrder.RequiredDate = null;
-            db.Orders.Update(canceleOrder);
-            await db.SaveChangesAsync();
-            await signalR.Clients.All.SendAsync("RefreshOrderList");
-            return Redirect(Request.Headers.Referer);
+            return Redirect("/errorpage?code=401");
         }
     }
 }

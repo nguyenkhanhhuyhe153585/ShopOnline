@@ -1,7 +1,8 @@
 ﻿@page
-@model ShopOnline.Pages.Accounts.Profile.OrderHistoryModel
+@model ShopOnline.Pages.Accounts.Profile.CanceledOrderModel
 @{
 }
+
 
 
 <div id="content-left">
@@ -13,10 +14,10 @@
     </ul>
     <h3>My order</h3>
     <ul>
-        <a href="#">
-        <li class="active">All orders</li></a>
-        <a href="~/accounts/profile/canceledorder">
-        <li>Canceled order</li></a>
+        <a href="~/accounts/profile/orderhistory">
+        <li >All orders</li></a>
+        <a href="javascript:void">
+        <li class="active">Canceled order</li></a>
     </ul>
 </div>
 <div id="content-right">
@@ -56,9 +57,9 @@
                             <div class="profile-order-content-col3">Quantity: @orderDetail.Quantity</div>
                             <div class="profile-order-content-col4">@orderDetail.UnitPrice $</div>
                         </div>
-                    }         
+                    }
                 </div>
-            }           
+            }
         </div>
     </div>
 </div>
@@ -68,7 +69,7 @@
         var connection = new signalR.HubConnectionBuilder().withUrl("/signalrServer").build();
         connection.start();
 
-        connection.on("LoadOrdersHist", function (){
+        connection.on("LoadOrdersHist", function () {
             window.location.reload();
         })
     });

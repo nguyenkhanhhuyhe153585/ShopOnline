@@ -73,3 +73,12 @@
         </div>
     </div>
 </div>
+
+<script>
+    var connection = new signalR.HubConnectionBuilder().withUrl("/signalrServer").build();
+    connection.start();
+
+    connection.on("RefreshOrderList", function () {
+        window.location.reload();
+    })
+</script>

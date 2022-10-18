@@ -12,7 +12,7 @@ namespace ShopOnline.Pages.Accounts.Cart
     public class IndexModel : PageModel
     {
         private readonly PRN221DBContext dBContext;
-        private List<OrderDetail> orderDetailsCard;
+        private Dictionary<int, OrderDetail> orderDetailsCard;
         private IHubContext<SignalrServer> signalrServer;
 
         public IndexModel(PRN221DBContext dBContext, IHubContext<SignalrServer> signalrServer)
@@ -45,7 +45,7 @@ namespace ShopOnline.Pages.Accounts.Cart
             {
                 return null;
             }
-            OrderDetail orderDetailFromCart = orderDetailsCard.SingleOrDefault(e => e.ProductId == productId);
+            OrderDetail orderDetailFromCart = orderDetailsCard[(int)productId];
             if (orderDetailFromCart == null)
             {
                 OrderDetail orderDetail = new OrderDetail
@@ -55,7 +55,7 @@ namespace ShopOnline.Pages.Accounts.Cart
                     Quantity = 1,
                     UnitPrice = (decimal)productFromDB.UnitPrice
                 };
-                orderDetailsCard.Add(orderDetail);
+                orderDetailsCard.Add((int)productId, orderDetail);
             }
             else
             {
@@ -70,8 +70,8 @@ namespace ShopOnline.Pages.Accounts.Cart
             ModelState.Remove("Customer.CustomerId");
             if (ModelState.IsValid)
             {
-                List<OrderDetail> orderDetail = SessionUtils.GetCartInfo(HttpContext.Session);
-                if (orderDetail.Count == 0)
+                Dictionary<int, OrderDetail> cart = SessionUtils.GetCartInfo(HttpContext.Session);
+                if (cart.Count == 0)
                 {
                     ViewData["error-message"] = "Cart empty.";
                     return Page();
@@ -103,17 +103,30 @@ namespace ShopOnline.Pages.Accounts.Cart
                     ShipName = Customer.ContactName,
                 };
 
-                order.Freight = orderDetail.Sum(e => e.UnitPrice * e.Quantity);
+                order.Freight = cart.Values.Sum(e => e.UnitPrice * e.Quantity);
 
                 await dBContext.Orders.AddAsync(order);
                 await dBContext.SaveChangesAsync();
 
                 Order newOrder = dBContext.Orders.OrderByDescending(e => e.OrderId).Take(1).ToList()[0];
-                orderDetail.ForEach(e => { e.OrderId = newOrder.OrderId; e.Product = null; });
 
-                List<Product> product = dBContext.Products.ToList();
 
-                await dBContext.OrderDetails.AddRangeAsync(orderDetail);
+
+                dBContext.Products.Where(e => cart.Keys.Contains(e.ProductId)).ToList().ForEach(
+                    e =>
+                    {
+                        if (e.UnitsOnOrder == null)
+                        { e.UnitsOnOrder = cart[e.ProductId].Quantity; }
+                        else
+                        { e.UnitsOnOrder += cart[e.ProductId].Quantity; }
+                    });
+
+                // Remove all product detail from orderDetail in Card
+                cart.Values.ToList().ForEach(e => { e.OrderId = newOrder.OrderId; e.Product = null; });
+
+
+
+                await dBContext.OrderDetails.AddRangeAsync(cart.Values);
 
 
                 //orderDetail.ForEach(e =>
