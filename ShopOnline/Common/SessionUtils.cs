@@ -28,6 +28,11 @@ namespace ShopOnline.Common
             return null;
         }
 
+        public static bool isAdminSession(ISession session)
+        {
+            return isAdmin(GetAccountFromSession(session));
+        }
+
         public static bool isAdmin(Account account)
         {
             if(account == null)

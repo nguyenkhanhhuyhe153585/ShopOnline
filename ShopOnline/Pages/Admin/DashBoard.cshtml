@@ -23,22 +23,18 @@
                 <div id="dashboard-1-container">
                     <div class="dashboard-item">
                         <div class="dashboard-item-title">Weekly Sales</div>
-                        <div class="dashboard-item-content">$47K</div>
-                        <div class="dashboard-item-content">@Model.weeklySale</div>
+                        <div class="dashboard-item-content">$@Model.weeklySale</div>
                     </div>
                     <div class="dashboard-item">
                         <div class="dashboard-item-title">Total Orders</div>
-                        <div class="dashboard-item-content">$1000K</div>
-                        <div class="dashboard-item-content">@Model.totalOrders</div>
+                        <div class="dashboard-item-content">$@Model.totalOrders</div>
                     </div>
                     <div class="dashboard-item">
                         <div class="dashboard-item-title">Total Customers</div>
-                        <div class="dashboard-item-content">5K</div>
                         <div class="dashboard-item-content">@Model.totalCustomerHasAccount</div>
                     </div>
                     <div class="dashboard-item">
                         <div class="dashboard-item-title">Total Guest</div>
-                        <div class="dashboard-item-content">3K</div>
                         <div class="dashboard-item-content">@Model.totalGuest</div>
                     </div>
                 </div>
@@ -100,7 +96,9 @@
             }
         });
     }
-
-    OrdersChart(@Model.orders12monthsJson);
+    @{
+        var order12 = Model.orders12months;
+    }
+        OrdersChart([@order12[1], @order12[2], @order12[3], @order12[4], @order12[5], @order12[6], @order12[7], @order12[8], @order12[9], @order12[10], @order12[11], @order12[12]]);
     CustomersChart([@Model.totalCustomer, @Model.newCustomer30days]);
 </script>

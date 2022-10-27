@@ -17,13 +17,31 @@ namespace ShopOnline.Pages.Admin.Orders
         public decimal totalPage = 0;
         public List<Order> orders = new List<Order>();
 
-        public void OnGet(DateTime? txtStartOrderDate, DateTime? txtEndOrderDate, int pageNum)
+        public IActionResult OnGet(DateTime? txtStartOrderDate, DateTime? txtEndOrderDate, int pageNum)
         {
-            IQueryable<Order> query = dBContext.Orders.Where(e => 
+            if (!SessionUtils.isAdminSession(HttpContext.Session))
+            {
+                return Redirect("/errorpage?code=401");
+            }
+            if (txtStartOrderDate != null)
+            {
+                txtStartOrderDate = Utils.StartOfDay((DateTime)txtStartOrderDate);
+            }
+            if (txtEndOrderDate != null)
+            {
+                txtEndOrderDate = Utils.EndOfDay((DateTime)txtEndOrderDate);
+            }
+
+            IQueryable<Order> query = dBContext.Orders.Where(e =>
                     (txtStartOrderDate == null ? true : e.OrderDate >= txtStartOrderDate)
-                && (txtEndOrderDate == null ? true : e.OrderDate <= txtEndOrderDate)).OrderByDescending(e=>e.OrderDate);          (query, totalPage) = Utils.Page(query, pageSize, pageNum);
+                && (txtEndOrderDate == null ? true : e.OrderDate <= txtEndOrderDate)).OrderByDescending(e => e.OrderDate);
+            (query, totalPage) = Utils.Page(query, pageSize, pageNum);
 
             orders = query.Include(e => e.Employee).Include(e => e.Customer).ToList();
+
+            ViewData["txtStartOrderDate"] = txtStartOrderDate?.ToString("yyyy-MM-dd");
+            ViewData["txtEndOrderDate"] = txtEndOrderDate?.ToString("yyyy-MM-dd");
+            return Page();
         }
     }
 }

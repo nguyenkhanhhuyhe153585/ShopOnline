@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using ShopOnline.Common;
 using ShopOnline.Models;
 using ShopOnline.SignalRLab;
 
@@ -27,6 +28,10 @@ namespace ShopOnline.Pages.Admin.Products
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
+            if (!SessionUtils.isAdminSession(HttpContext.Session))
+            {
+                return Redirect("/errorpage?code=401");
+            }
             if (id == null || _context.Products == null)
             {
                 return NotFound();
@@ -47,11 +52,22 @@ namespace ShopOnline.Pages.Admin.Products
 
         public async Task<IActionResult> OnPostAsync(int? id)
         {
+            if (!SessionUtils.isAdminSession(HttpContext.Session))
+            {
+                return Redirect("/errorpage?code=401");
+            }
             if (id == null || _context.Products == null)
             {
                 return NotFound();
             }
             var product = await _context.Products.FindAsync(id);
+            var orderDetails = _context.OrderDetails.Where(e => e.ProductId == id);
+
+            if(orderDetails.Count() > 0)
+            {
+                ViewData["msg"] = "Product has orders";
+                return Page();
+            }
 
             if (product != null)
             {
@@ -60,7 +76,7 @@ namespace ShopOnline.Pages.Admin.Products
                 await _context.SaveChangesAsync();
                 await signalR.Clients.All.SendAsync("LoadProductOnChange");
             }
-
+            
             return RedirectToPage("./index");
         }
     }

@@ -13,12 +13,27 @@
 }
 
 input[type="submit"], input[type="button"] {
-    width: 100%;
     background-color: brown;
     color: #fff;
     margin-bottom: 15px;
     border-radius: 5px;
     border: none;
     cursor: pointer;
-    padding: 5px;
+    padding: 5px 20px;
+}
+
+#product-title-1 input[type="submit"]{
+    width: fit-content;
+}
+
+#product-title-2 input[type="submit"]{
+    width: fit-content;
+}
+
+.product {
+    width: 22%;
+}
+
+.filter-option {
+    margin: 20px;
 }

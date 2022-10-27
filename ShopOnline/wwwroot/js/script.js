@@ -1,4 +1,5 @@
 ﻿function paging(totalPage) {
+    let gap = 2;
     let divPagingElement = document.querySelector("#pagination");
 
     let url = new URL(location.href);
@@ -6,29 +7,47 @@
 
     let pageNum;
     if (params.has("pageNum")) {
-        pageNum = params.get("pageNum");
+        pageNum = Number(params.get("pageNum"));
     } else {
         pageNum = 1;
     }
 
     if (pageNum > 1) {
+        params.set("pageNum", 1);
+        divPagingElement.innerHTML += `<a href="${url}">First</a>`;
         params.set("pageNum", pageNum - 1);
         divPagingElement.innerHTML += `<a href="${url}">&laquo;</a>`;
     }
-      
-    for (let i = 1; i <= totalPage; i++) {
+    let pageFront = pageNum - gap;
+    if (pageFront < 1) {
+        pageFront = 1;
+    }
+    for (let i = pageFront; i < pageNum; i++) {
         params.set("pageNum", i);
-        if (i == pageNum) {
-            divPagingElement.innerHTML += `<a href="javascript:void" class="active">${i}</a>`;
-            continue;
-        }
+
+        divPagingElement.innerHTML += `<a href="${url}">${i}</a>`;
+    }
+
+    // print current page;
+    divPagingElement.innerHTML += `<a href="javascript:void" class="active">${pageNum}</a>`;
+
+    let pageRear = pageNum + gap;
+    if (pageRear > totalPage) {
+        pageRear = totalPage;
+    }
+    for (let i = pageNum + 1; i <= pageRear; i++) {
+        params.set("pageNum", i);
+
         divPagingElement.innerHTML += `<a href="${url}">${i}</a>`;
     }
 
     if (pageNum < totalPage) {
         params.set("pageNum", Number(pageNum) + 1);
         divPagingElement.innerHTML += `<a href="${url}">&raquo;</a>`;
-    } 
+
+        params.set("pageNum", Number(totalPage));
+        divPagingElement.innerHTML += `<a href="${url}">Last</a>`;
+    }
 }
 
 function filterNsearch(event, elementId, paramKey) {
@@ -38,4 +57,17 @@ function filterNsearch(event, elementId, paramKey) {
     url.searchParams.delete("pageNum");
     url.searchParams.set(paramKey, element.value);
     location.href = url;
+}
+
+function SelectSortBy(ele) {
+    var url = new URL(window.location.href);
+    if (ele.value.length === 0) {
+        url.searchParams.delete("sortBy");
+    }
+    if (url.searchParams.has("sortBy")) {
+        url.searchParams.set("sortBy", ele.value);
+    } else {
+        url.searchParams.append("sortBy", ele.value);
+    }
+    window.location.href = url;
 }

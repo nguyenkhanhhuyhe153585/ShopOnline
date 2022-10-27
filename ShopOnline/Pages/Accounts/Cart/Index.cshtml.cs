@@ -24,7 +24,7 @@ namespace ShopOnline.Pages.Accounts.Cart
         [BindProperty]
         public Customer Customer { get; set; }
 
-        public IActionResult OnGet(int? productId)
+        public IActionResult OnGet()
         {
             Account account = SessionUtils.GetAccountFromSession(HttpContext.Session);
             if (account == null)
@@ -35,34 +35,11 @@ namespace ShopOnline.Pages.Accounts.Cart
             {
                 Customer = dBContext.Customers.Find(account.CustomerId);
             }
-            if (productId == null)
-            {
-                return Page();
-            }
             orderDetailsCard = SessionUtils.GetCartInfo(HttpContext.Session);
-            Product productFromDB = dBContext.Products.Find(productId);
-            if (productFromDB == null)
-            {
-                return null;
-            }
-            OrderDetail orderDetailFromCart = orderDetailsCard[(int)productId];
-            if (orderDetailFromCart == null)
-            {
-                OrderDetail orderDetail = new OrderDetail
-                {
-                    Product = productFromDB,
-                    ProductId = (int)productId,
-                    Quantity = 1,
-                    UnitPrice = (decimal)productFromDB.UnitPrice
-                };
-                orderDetailsCard.Add((int)productId, orderDetail);
-            }
-            else
-            {
-                orderDetailFromCart.Quantity++;
-            }
+           
+            ViewData["totalAmount"] = orderDetailsCard.Values.Sum(e => e.UnitPrice * e.Quantity);
             HttpContext.Session.SetString("Cart", JsonSerializer.Serialize(orderDetailsCard));
-            return RedirectToPage("Cart");
+            return Page();
         }
 
         public async Task<IActionResult> OnPost(DateTime? requiredShipDate)
@@ -87,6 +64,7 @@ namespace ShopOnline.Pages.Accounts.Cart
                 {
                     customerId = Utils.RandomCustId(dBContext.Customers);
                     Customer.CustomerId = customerId;
+                    Customer.CreateDate = DateTime.Now;
                     await dBContext.Customers.AddAsync(Customer);
                 }
                 if (account != null)
@@ -136,7 +114,7 @@ namespace ShopOnline.Pages.Accounts.Cart
                 //   dBContext.Products.Update(product);
                 //});
 
-
+                ViewData["error-message"] = "Order success";
                 HttpContext.Session.Remove("Cart");
                 await dBContext.SaveChangesAsync();
                 await signalrServer.Clients.All.SendAsync("LoadOrdersHist");

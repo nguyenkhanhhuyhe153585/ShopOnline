@@ -13,13 +13,19 @@
         {
             <a href="~/categories/index?categoryId=@cate.CategoryId">
             <li>@cate.CategoryName</li></a>
+            if ((int)ViewData["selectCategory"] == cate.CategoryId){
+                <a href="~/categories/index?categoryId=@cate.CategoryId">
+                <li class="active">@cate.CategoryName</li></a>
+            }
         }
     </ul>
 </div>
 <div id="content-right">
-    <div style="margin: 5%">
+    <div class="filter-option">
+        <label for="sort-by">Sort by: </label>
         <select id="sort-by" onchange="SelectSortBy(this)">
-            <option value="">
+            <option value="0">
+                Sort by
             </option>
             <option id="sort-opt-priceAsc" value="priceAsc">
                 Price Ascending
@@ -33,51 +39,28 @@
         @foreach (var pro in Model.products)
         {
             <div class="product">
-                <a href="~/products/detail"><img src="~/img/1.jpg" width="100%" /></a>
-                <div class="name"><a href="~/product/detail?productId=@pro.ProductId">@pro.ProductName</a></div>
+                <a href="~/products/detail?productId=@pro.ProductId"><img src="~/img/1.jpg" width="100%" /></a>
+                <div class="name"><a href="~/products/detail?productId=@pro.ProductId">@pro.ProductName</a></div>
                 <div class="price">$@pro.UnitPrice</div>
-                <div><a href="~/accouns/cart/addtocart?productId=@pro.ProductId&isBuyNow=true">Buy now</a></div>
+                <div><a href="~/accounts/cart/addtocart?productId=@pro.ProductId&isBuyNow=true">Buy now</a></div>
             </div>
         }
     </div>
-
-    <div>
-        @for (int i = 1; i <= Model.totalPage; i++)
-        {
-            <a onclick="GetPagingAndSortingURL(@i)" href="javascript:void">@i</a>
-        }
+    <div id="paging">
+        <div class="pagination" id="pagination">
+        </div>
     </div>
-
 </div>
 <script>
     var sortOptPriceDesc = document.getElementById("sort-opt-priceDesc");
     var sortOptPriceAsc = document.getElementById("sort-opt-priceAsc");
     var url = new URL(window.location.href);
-    if (url.searchParams.get("sortBy").match("priceDesc")) {
-        sortOptPriceDesc.selected = true;
-    } else if (url.searchParams.get("sortBy").match("priceAsc")) {
-        sortOptPriceAsc.selected = true;
-    }
-    function GetPagingAndSortingURL(pageNum) {
-        var url = new URL(window.location.href);
-        if (url.searchParams.has("pageNum")) {
-            url.searchParams.set("pageNum", pageNum);
-        } else {
-            url.searchParams.append("pageNum", pageNum);
+    if (url.searchParams.has("sortBy")) {
+        if (url.searchParams.get("sortBy").match("priceDesc")) {
+            sortOptPriceDesc.selected = true;
+        } else if (url.searchParams.get("sortBy").match("priceAsc")) {
+            sortOptPriceAsc.selected = true;
         }
-        window.location.href = url;
-        return url;
     }
-    function SelectSortBy(ele) {
-        var url = new URL(window.location.href);
-        if (ele.value.length === 0) {
-            url.searchParams.delete("sortBy");
-        }
-        if (url.searchParams.has("sortBy")) {
-            url.searchParams.set("sortBy", ele.value);
-        } else {
-            url.searchParams.append("sortBy", ele.value);
-        }
-        window.location.href = url;
-    }
+    paging(@Model.totalPage);
 </script>

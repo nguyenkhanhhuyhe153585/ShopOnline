@@ -5,8 +5,12 @@ namespace ShopOnline.Pages
 {
     public class ErrorPageModel : PageModel
     {
-        public void OnGet(int code)
+        public void OnGet(string code)
         {
+            if(code == null)
+            {
+                code = "404";
+            }
             ViewData["code"] = code;
         }
     }

@@ -22,8 +22,8 @@
             <div id="order-title">
                 <b>Filter by Order date:</b>
                 <form method=get>
-                    From: <input type="date" name="txtStartOrderDate" />
-                    To: <input type="date" name="txtEndOrderDate" />
+                    From: <input type="date" name="txtStartOrderDate" value="@ViewData["txtStartOrderDate"]" />
+                    To: <input type="date" name="txtEndOrderDate" value="@ViewData["txtEndOrderDate"]" />
                     <input type="submit" value="Filter">
                 </form>
             </div>

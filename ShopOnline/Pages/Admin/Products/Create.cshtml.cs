@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.SignalR;
+using ShopOnline.Common;
 using ShopOnline.Models;
 using ShopOnline.SignalRLab;
 
@@ -24,6 +25,10 @@ namespace ShopOnline.Pages.Admin.Products
 
         public IActionResult OnGet()
         {
+            if (!SessionUtils.isAdminSession(HttpContext.Session))
+            {
+                return Redirect("/errorpage?code=401");
+            }
             ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName");
             return Page();
         }
@@ -33,6 +38,10 @@ namespace ShopOnline.Pages.Admin.Products
 
         public async Task<IActionResult> OnPostAsync()
         {
+            if (!SessionUtils.isAdminSession(HttpContext.Session))
+            {
+                return Redirect("/errorpage?code=401");
+            }
             if (!ModelState.IsValid)
             {
                 return Page();

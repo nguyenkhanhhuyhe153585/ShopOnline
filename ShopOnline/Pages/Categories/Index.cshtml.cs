@@ -21,7 +21,7 @@ namespace ShopOnline.Pages.Categories
 
         public void OnGet(int categoryId, string sortBy, int pageNum)
         {
-            pageNum = Utils.PageLimit(pageNum);
+            
             categories = dBContext.Categories.ToList();
 
             IOrderedQueryable<Product> orderCategory;
@@ -40,6 +40,7 @@ namespace ShopOnline.Pages.Categories
 
             products = queryProduct.ToList();
             ViewData["sortBy"] = sortBy;
+            ViewData["selectCategory"] = categoryId;
         }
     }
 }

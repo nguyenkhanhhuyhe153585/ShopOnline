@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using ShopOnline.Common;
 using ShopOnline.Models;
 
 namespace ShopOnline.Pages.Admin.Orders
@@ -16,10 +17,17 @@ namespace ShopOnline.Pages.Admin.Orders
 
         public Order orderInfo;
 
-        public void OnGet(int orderId)
+        public IActionResult OnGet(int orderId)
         {
-            orderInfo = db.Orders.Where(o => o.OrderId == orderId)
-                .Include(e => e.OrderDetails).ThenInclude(e => e.Product).SingleOrDefault();
+            if (SessionUtils.isAdminSession(HttpContext.Session))
+            {
+                orderInfo = db.Orders.Where(o => o.OrderId == orderId)
+                    .Include(e => e.OrderDetails).ThenInclude(e => e.Product).SingleOrDefault();
+                return Page();
+            }else
+            {
+                return Redirect("/errorpage?code=401");
+            }
         }
 
     }

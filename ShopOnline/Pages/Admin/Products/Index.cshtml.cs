@@ -25,8 +25,13 @@ namespace ShopOnline.Pages.Admin.Products
         public List<Product> products;
         public List<Category> categories;
         private int pageSize = 10;
-        public async Task OnGetAsync(int categoryId, string search, int pageNum)
+
+        public IActionResult OnGet(int categoryId, string search, int pageNum)
         {
+            if (!SessionUtils.isAdminSession(HttpContext.Session))
+            {
+                return Redirect("/errorpage?code=401");
+            }
             ViewData["categoryId"] = categoryId;
             ViewData["search"] = search;
             if (search == null)
@@ -40,7 +45,9 @@ namespace ShopOnline.Pages.Admin.Products
                     && ((search.Length == 0) ? true : e.ProductName.Contains(search))).OrderByDescending(e => e.ProductId);
                 (query, totalPage) = Utils.Page(query, pageSize, pageNum);
                 products = query.Include(e => e.Category).ToList();
+                return Page();
             }
+            return Redirect("/errorpage?code=403");
         }
     }
 }

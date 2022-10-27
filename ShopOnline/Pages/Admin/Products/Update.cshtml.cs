@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using ShopOnline.Common;
 using ShopOnline.Models;
 using ShopOnline.SignalRLab;
 
@@ -31,6 +32,10 @@ namespace ShopOnline.Pages.Admin.Products
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
+            if (!SessionUtils.isAdminSession(HttpContext.Session))
+            {
+                return Redirect("/errorpage?code=401");
+            }
             if (id == null || _context.Products == null)
             {
                 return NotFound();
@@ -54,6 +59,10 @@ namespace ShopOnline.Pages.Admin.Products
         // For more details, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
+            if (!SessionUtils.isAdminSession(HttpContext.Session))
+            {
+                return Redirect("/errorpage?code=401");
+            }
             if (!ModelState.IsValid)
             {
                 return Page();

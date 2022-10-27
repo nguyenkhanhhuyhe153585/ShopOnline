@@ -23,14 +23,13 @@ namespace ShopOnline.Pages.Admin
         public int totalCustomer = 0;
         public int newCustomer30days = 0;
 
-        public string orders12monthsJson;
+        public Dictionary<int, int> orders12months;
 
         public IActionResult OnGet()
         {
-            Account currentUser = SessionUtils.GetAccountFromSession(HttpContext.Session);
-            if (!SessionUtils.isAdmin(currentUser))
+            if (!SessionUtils.isAdminSession(HttpContext.Session))
             {
-                return Redirect("/errorpage");
+                return Redirect("/errorpage?code=401");
             }
             DateTime currentDateTime = DateTime.Now;
 
@@ -65,13 +64,20 @@ namespace ShopOnline.Pages.Admin
                                     && customer.CreateDate.Value.Year == currentDateTime.Year
                                  select customer).Count();
 
-            orders12monthsJson = (from order in dBContext.Orders
-                                  where order.OrderDate.Value.Year == 1997
+            orders12months = (from order in dBContext.Orders
+                                  where order.OrderDate.Value.Year == currentDateTime.Year
                                   group order by order.OrderDate.Value.Month into orderMonth
                                   orderby orderMonth.Key ascending
-                                  select orderMonth.Select(o => o.OrderId).Count()
+                                  select new {Month = orderMonth.Key, Orders = orderMonth.Select(o => o.OrderId).Count() }
 
-                     ).ToList().ToJson();
+                     ).ToDictionary(e => e.Month, e=> e.Orders);
+
+            for(var i = 1; i<=12; i++){
+                if (!orders12months.Keys.Contains(i))
+                {
+                    orders12months.Add(i, 0);
+                }
+            }
 
             return Page();
         }

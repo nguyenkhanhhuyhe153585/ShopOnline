@@ -48,6 +48,7 @@ namespace ShopOnline.Pages.Accounts
                     CompanyName = Customer.CompanyName,
                     ContactName = Customer.ContactName,
                     ContactTitle = Customer.ContactTitle,
+                    CreateDate = DateTime.Now,
                     Address = Customer.Address
                 };
                 await dBContext.Customers.AddAsync(customer);
@@ -60,7 +61,7 @@ namespace ShopOnline.Pages.Accounts
                     Role = 2
                 };
                 await dBContext.Accounts.AddAsync(account);
-                await dBContext.SaveChangesAsync();
+                await dBContext.SaveChangesAsync(); 
 
                 //HttpContext.Session.SetString("account", JsonSerializer.Serialize(account));
 
