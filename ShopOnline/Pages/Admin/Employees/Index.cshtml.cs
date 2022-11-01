@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using ShopOnline.Common;
 using ShopOnline.Models;
 
-namespace ShopOnline.Pages.Admin.Customers
+namespace ShopOnline.Pages.Admin.Employees
 {
     public class IndexModel : PageModel
     {
@@ -19,25 +19,19 @@ namespace ShopOnline.Pages.Admin.Customers
             _context = context;
         }
 
-        public IList<Customer> Customer { get;set; } = default!;
+        public IList<Employee> Employee { get; set; } = default!;
 
         private int pageSize = 10;
         public decimal totalPage = 0;
 
-        public async Task<IActionResult> OnGetAsync(int pageNum, string search)
+        public async Task OnGetAsync(int pageNum)
         {
-            if (!SessionUtils.isAdminSession(HttpContext.Session))
+            if (_context.Employees != null)
             {
-                return Redirect("/errorpage?code=401");
-            }
-            if (_context.Customers != null)
-            {
-                ViewData["search"] = search;   
-                IQueryable<Customer> query = _context.Customers.Where(e=> (search == null)? true : e.ContactName.Contains(search));
+                IQueryable<Employee> query = _context.Employees;
                 (query, totalPage) = Utils.Page(query, pageSize, pageNum);
-                Customer = await query.ToListAsync();
+                Employee = await query.Include(e => e.Department).ToListAsync();
             }
-            return Page();
         }
     }
 }

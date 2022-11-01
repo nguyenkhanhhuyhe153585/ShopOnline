@@ -1,0 +1,112 @@
+﻿@page
+@model ShopOnline.Pages.Admin.Employees.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+<div id="content-left">
+    <ul>
+        <a href="~/admin/dashboard">
+        <li>Dashboard</li></a>
+        <a href="~/admin/dashboard/orders">
+        <li>Orders</li></a>
+        <a href="~/admin/products">
+        <li>Products</li></a>
+        <a href="~/admin/customers">
+        <li>Customers</li></a>
+        <a href="javascript:void">
+        <li class="active">Employees</li></a>
+    </ul>
+</div>
+<div id="content-right">
+    <h1>Index</h1>
+
+    <p>
+        <a asp-page="Create">Create New</a>
+    </p>
+    <div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Employee[0].LastName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Employee[0].FirstName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Employee[0].Title)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Employee[0].TitleOfCourtesy)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Employee[0].BirthDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Employee[0].HireDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Employee[0].Address)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Employee[0].Department)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Employee)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.LastName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FirstName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Title)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.TitleOfCourtesy)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.BirthDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.HireDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Address)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Department.DepartmentId)
+                        </td>
+                        <td>
+                            <a asp-page="./Edit" asp-route-id="@item.EmployeeId">Edit</a> |
+                            <a asp-page="./Details" asp-route-id="@item.EmployeeId">Details</a> |
+                            <a asp-page="./Delete" asp-route-id="@item.EmployeeId">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div id="paging">
+        <div class="pagination" id="pagination">
+        </div>
+    </div>
+</div>
+<script>
+    $(() => {
+        var connection = new signalR.HubConnectionBuilder().withUrl("/signalrServer").build();
+        connection.start();
+
+        connection.on("LoadEmployeeChange", function () {
+            window.location.reload();
+        })
+    });
+
+    paging(@Model.totalPage);
+</script>

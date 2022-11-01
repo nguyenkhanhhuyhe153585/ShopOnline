@@ -71,3 +71,30 @@ function SelectSortBy(ele) {
     }
     window.location.href = url;
 }
+
+function DeactiveCustomer(ele, customerid) {
+    var active = true;
+    if (ele.innerHTML === 'Deactive') {
+        active = false;
+    } else if (ele.innerHTML === 'Active') {
+        active = true;
+    }
+
+    var form = document.createElement("form");
+    form.setAttribute("method", "post");
+    form.setAttribute("action", '/admin/customers/details');
+
+
+    const idField = document.createElement('input');
+    idField.type = 'hidden';
+    idField.name = 'id';
+    idField.value = customerid;
+    form.appendChild(idField);
+    const activeField = document.createElement('input');
+    activeField.type = 'hidden';
+    activeField.name = 'active';
+    activeField.value = active;
+    form.appendChild(activeField);
+    document.body.appendChild(form);
+    form.submit();
+}

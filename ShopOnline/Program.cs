@@ -13,7 +13,7 @@ builder.Services.AddRazorPages().AddRazorPagesOptions(o =>
 {
     o.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute());
 });
-//builder.Services.AddDbContext<PRN221DBContext>();
+
 // Add session 5 phút hết hạn
 builder.Services.AddSession(opt => opt.IdleTimeout = TimeSpan.FromMinutes(5));
 builder.Services.AddDbContext<PRN221DBContext>(opt => opt.UseSqlServer(

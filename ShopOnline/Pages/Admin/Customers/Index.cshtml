@@ -14,61 +14,87 @@
         <li>Products</li></a>
         <a href="javascript:void">
         <li class="active">Customers</li></a>
+        <a href="~/admin/employees">
+        <li>Employees</li></a>
     </ul>
 </div>
 <div id="content-right">
     <h1>Customers</h1>
-
-    <p>
-        <a asp-page="Create">Create New</a>
-    </p>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Customer[0].CompanyName)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Customer[0].ContactName)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Customer[0].ContactTitle)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Customer[0].Address)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Customer[0].CreateDate)
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Customer)
-            {
+    <form action="" method="get">
+        <input type="text" name="search" placeholder="Enter customer name to search" value="@ViewData["search"]">
+        <input type="submit" value="Search">
+    </form>
+    <div>
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.CompanyName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ContactName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ContactTitle)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Address)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.CreateDate)
-                    </td>
-                    <td>
-                        <a asp-page="./Edit" asp-route-id="@item.CustomerId">Edit</a> |
-                        <a asp-page="./Details" asp-route-id="@item.CustomerId">Details</a> |
-                        <a asp-page="./Delete" asp-route-id="@item.CustomerId">Delete</a>
-                    </td>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Customer[0].CompanyName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Customer[0].ContactName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Customer[0].ContactTitle)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Customer[0].Address)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Customer[0].CreateDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Customer[0].IsActive)
+                    </th>
+                    <th></th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Customer)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CompanyName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ContactName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ContactTitle)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Address)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CreateDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.IsActive)
+                        </td>
+                        <td>
+                            <a asp-page="./Edit" asp-route-id="@item.CustomerId">Edit</a> |
+                            <a asp-page="./Details" asp-route-id="@item.CustomerId">Details</a> |
+                            <a asp-page="./Delete" asp-route-id="@item.CustomerId">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div id="paging">
+        <div class="pagination" id="pagination">
+        </div>
+    </div>
 </div>
+<script>
+    $(() => {
+        var connection = new signalR.HubConnectionBuilder().withUrl("/signalrServer").build();
+        connection.start();
+
+        connection.on("LoadCustomerChange", function () {
+            window.location.reload();
+        })
+    });
+
+    paging(@Model.totalPage);
+</script>

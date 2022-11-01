@@ -27,11 +27,11 @@ namespace ShopOnline.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //            if (!optionsBuilder.IsConfigured)
-            //            {
-            //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-            //                optionsBuilder.UseSqlServer("server=(local); database=PRN221DB;uid=sa;pwd=sa");
-            //            }
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseSqlServer("server=(local); database=PRN221DB;uid=sa;pwd=sa");
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -100,6 +100,11 @@ namespace ShopOnline.Models
                 entity.Property(e => e.ContactTitle).HasMaxLength(30);
 
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
+                entity.Property(e => e.IsActive)
+                    .IsRequired()
+                    .HasColumnName("isActive")
+                    .HasDefaultValueSql("((1))");
             });
 
             modelBuilder.Entity<Department>(entity =>
