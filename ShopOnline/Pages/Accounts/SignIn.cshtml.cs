@@ -1,7 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.IdentityModel.Tokens;
 using ShopOnline.Common;
 using ShopOnline.Models;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using System.Text.Json;
 
 namespace ShopOnline.Pages.Accounts
@@ -45,6 +49,7 @@ namespace ShopOnline.Pages.Accounts
                     if (account.Password.Equals(Account.Password))
                     {
                         HttpContext.Session.SetString("CustSession", JsonSerializer.Serialize(account));
+                        HttpContext.Response.Cookies.Append("Token", SessionUtils.EncodeJWTToken(account));
 
                         if (SessionUtils.isAdmin(account))
                         {
@@ -59,5 +64,6 @@ namespace ShopOnline.Pages.Accounts
             }
             return Page();
         }
+       
     }
 }

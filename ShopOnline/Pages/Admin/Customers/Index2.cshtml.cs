@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using ShopOnline.Common;
 using ShopOnline.Models;
 
 namespace ShopOnline.Pages.Admin.Customers
@@ -26,6 +27,7 @@ namespace ShopOnline.Pages.Admin.Customers
             {
                 Customer = await _context.Customers.ToListAsync();
             }
+
         }
     }
 }

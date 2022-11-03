@@ -1,4 +1,8 @@
-﻿using ShopOnline.Models;
+﻿using Microsoft.IdentityModel.Tokens;
+using ShopOnline.Models;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using System.Text.Json;
 
 namespace ShopOnline.Common
@@ -35,11 +39,58 @@ namespace ShopOnline.Common
 
         public static bool isAdmin(Account account)
         {
-            if(account == null)
+            if (account == null)
             {
                 return false;
             }
             return account.Role == 1;
+        }
+
+
+        public static string EncodeJWTToken(Account account)
+        {
+            var builder = WebApplication.CreateBuilder();
+            var key = Encoding.ASCII.GetBytes
+            (builder.Configuration["Jwt:Key"]);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                new Claim("Id", Guid.NewGuid().ToString()),
+                new Claim("Sub", account.AccountId.ToString()),
+                new Claim("Email", account.Email),
+                new Claim(JwtRegisteredClaimNames.Jti,
+                Guid.NewGuid().ToString())
+             }),
+                Expires = DateTime.UtcNow.AddMinutes(5),
+                SigningCredentials = new SigningCredentials
+                (new SymmetricSecurityKey(key),
+                SecurityAlgorithms.HmacSha512Signature)
+            };
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var stringToken = tokenHandler.WriteToken(token);
+            return stringToken;
+        }
+
+        public static Dictionary<string, string> DecodeJWTTokenGetName(string token)
+        {
+            {
+                var builder = WebApplication.CreateBuilder();
+                var key = Encoding.ASCII.GetBytes
+                    (builder.Configuration["Jwt:Key"]);
+                var handler = new JwtSecurityTokenHandler();
+                var validations = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+                var claims = handler.ValidateToken(token, validations, out var tokenSecure);
+                Dictionary<string, string> dicClaims = claims.Claims.ToDictionary(x => x.Type, x => x.Value);
+                return dicClaims;
+            }
         }
     }
 }

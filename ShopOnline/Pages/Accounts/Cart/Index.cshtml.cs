@@ -1,24 +1,35 @@
+using DinkToPdf;
+using DinkToPdf.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.SignalR;
+using NPOI.SS.UserModel;
 using ShopOnline.Common;
 using ShopOnline.Models;
 using ShopOnline.SignalRLab;
-using System.Diagnostics;
+using Syncfusion.XlsIO;
+using System.Collections;
+using System.IO;
+using System.Text;
 using System.Text.Json;
+using static System.Net.WebRequestMethods;
 
 namespace ShopOnline.Pages.Accounts.Cart
 {
     public class IndexModel : PageModel
     {
         private readonly PRN221DBContext dBContext;
+        private IWebHostEnvironment env;
         private Dictionary<int, OrderDetail> orderDetailsCard;
         private IHubContext<SignalrServer> signalrServer;
+        private IConverter converter;
 
-        public IndexModel(PRN221DBContext dBContext, IHubContext<SignalrServer> signalrServer)
+        public IndexModel(PRN221DBContext dBContext, IHubContext<SignalrServer> signalrServer, IConverter converter, IWebHostEnvironment env)
         {
             this.dBContext = dBContext;
             this.signalrServer = signalrServer;
+            this.converter = converter;
+            this.env = env;
         }
 
         [BindProperty]
@@ -88,8 +99,6 @@ namespace ShopOnline.Pages.Accounts.Cart
 
                 Order newOrder = dBContext.Orders.OrderByDescending(e => e.OrderId).Take(1).ToList()[0];
 
-
-
                 dBContext.Products.Where(e => cart.Keys.Contains(e.ProductId)).ToList().ForEach(
                     e =>
                     {
@@ -101,8 +110,6 @@ namespace ShopOnline.Pages.Accounts.Cart
 
                 // Remove all product detail from orderDetail in Card
                 cart.Values.ToList().ForEach(e => { e.OrderId = newOrder.OrderId; e.Product = null; });
-
-
 
                 await dBContext.OrderDetails.AddRangeAsync(cart.Values);
 
@@ -118,10 +125,43 @@ namespace ShopOnline.Pages.Accounts.Cart
                 HttpContext.Session.Remove("Cart");
                 await dBContext.SaveChangesAsync();
                 await signalrServer.Clients.All.SendAsync("LoadOrdersHist");
+                var file = GeneratePdfInvoice(order);
+                string body = new HTMLTemplate().MailConfrimOrder(order);
+                await Utils.Email("khanhhuy1110@gmail.com", body, new System.Net.Mail.Attachment(new MemoryStream(file), "Invoice.pdf"));
                 return Page();
             }
-            ViewData["error-message"] = "Provide all required field.";
+            ViewData["error-message"] = "Provide all required field.";       
             return Page();
         }
+
+        private byte[] GeneratePdfInvoice(Order order)
+        {
+            var globalSettings = new GlobalSettings
+            {
+                ColorMode = ColorMode.Color,
+                Orientation = Orientation.Portrait,
+                PaperSize = PaperKind.A4,
+                Margins = new MarginSettings { Top = 10 },
+                DocumentTitle = "PDF Report",             
+            };
+            var objectSettings = new ObjectSettings
+            {
+                PagesCount = true,
+                HtmlContent = Utils.GetHTMLOrderString(order),
+                WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = Path.Combine(Directory.GetCurrentDirectory(), "pdfassets", "styles.css") },
+                HeaderSettings = { FontName = "Arial", FontSize = 9, Right = "Page [page] of [toPage]", Line = true },
+                FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Report Footer" }
+            };
+            var pdf = new HtmlToPdfDocument()
+            {
+                GlobalSettings = globalSettings,
+                Objects = { objectSettings }
+            };
+            return converter.Convert(pdf);
+           
+            //return File(file, "application/pdf", "Invoice.pdf");
+        }
+
+      
     }
 }
