@@ -9,6 +9,7 @@ using ShopOnline.Models;
 using System;
 using System.Text.Json;
 
+
 namespace ShopOnline.Pages.Accounts
 {
     public class SignUpModel : PageModel
@@ -52,12 +53,11 @@ namespace ShopOnline.Pages.Accounts
                     Address = Customer.Address
                 };
                 await dBContext.Customers.AddAsync(customer);
-
                 var account = new Account
                 {
                     CustomerId = customer.CustomerId,
                     Email = Account.Email,
-                    Password = Account.Password,
+                    Password = SessionUtils.PasswordHasher(Account.Password),
                     Role = 2
                 };
                 await dBContext.Accounts.AddAsync(account);

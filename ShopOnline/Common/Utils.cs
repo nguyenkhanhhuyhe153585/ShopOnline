@@ -64,7 +64,7 @@ namespace ShopOnline.Common
         }
 
         // For sendmail
-        public static async Task Email(string mailTo, string body, Attachment attachment)
+        public static async Task Email(string mailTo, string subject, string body, Attachment attachment)
         {
             try
             {
@@ -72,7 +72,7 @@ namespace ShopOnline.Common
                 SmtpClient smtp = new SmtpClient();
                 message.From = new MailAddress("area1110@outlook.com");
                 message.To.Add(new MailAddress(mailTo));
-                message.Subject = "Test";
+                message.Subject = subject;
                 message.IsBodyHtml = true; //to make message body as html  
                 message.Body = body;
                 if (attachment != null)

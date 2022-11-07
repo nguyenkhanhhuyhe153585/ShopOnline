@@ -20,5 +20,16 @@ namespace ShopOnline.Common
                 $"<p></p>\r\n</body>\r\n</html>");
             return mailBuilder.ToString();
         }
+
+        public string MailResetPassword(Account account, string urlToken)
+        {
+            StringBuilder mailBuilder = new StringBuilder();
+            mailBuilder.Append($" <h3>Hi, {account.Customer.ContactName}</h3>\r\n" +
+                $"<p>This is email reset password from ShopingOnline\r\n" +
+                $"</p>\r\n    <p>Please goto the link below for reset your password</p>\r\n" +
+                $"<p><a href=\"{urlToken}\">{urlToken}</a></p>");
+
+            return mailBuilder.ToString();
+        }
     }
 }

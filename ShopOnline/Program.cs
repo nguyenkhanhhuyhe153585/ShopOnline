@@ -18,11 +18,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages().AddRazorPagesOptions(o =>
 {
     o.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute());
-    o.Conventions.AddFolderApplicationModelConvention("/admin", model => model.Filters.Add(new MyFilter()));
+    //o.Conventions.AddFolderApplicationModelConvention("/accounts/profile", model => model.Filters.Add(new MyFilter(new PRN221DBContext())));
+    //o.Conventions.AddFolderApplicationModelConvention("/admin", model => model.Filters.Add(new MyFilter(new PRN221DBContext())));
+
 });
 
-// Add session 5 phút hết hạn
-builder.Services.AddSession(opt => opt.IdleTimeout = TimeSpan.FromMinutes(5));
+// Add session 30 phút hết hạn
+builder.Services.AddSession(opt => opt.IdleTimeout = TimeSpan.FromMinutes(30));
 builder.Services.AddDbContext<PRN221DBContext>(opt => opt.UseSqlServer(
     builder.Configuration.GetConnectionString("DB")
     )
@@ -31,25 +33,26 @@ builder.Services.AddDbContext<PRN221DBContext>(opt => opt.UseSqlServer(
 builder.Services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
 
 // Add authen cho JWT
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(o =>
-{
-    o.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey
-        (Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = false,
-        ValidateIssuerSigningKey = true
-    };
-});
+//builder.Services.AddAuthentication(options =>
+//{
+//    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+//    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+//    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+
+//}).AddJwtBearer(o =>
+//{
+//    o.TokenValidationParameters = new TokenValidationParameters
+//    {
+//        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+//        ValidAudience = builder.Configuration["Jwt:Audience"],
+//        IssuerSigningKey = new SymmetricSecurityKey
+//        (Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+//        ValidateIssuer = true,
+//        ValidateAudience = true,
+//        ValidateLifetime = false,
+//        ValidateIssuerSigningKey = true
+//    };
+//});
 builder.Services.AddAuthorization();
 
 builder.Services.AddSignalR();
@@ -58,8 +61,8 @@ builder.Services.AddSignalR();
 var app = builder.Build();
 
 // Use JWT
-app.UseAuthentication();
-app.UseAuthorization();
+//app.UseAuthentication();
+//app.UseAuthorization();
 
 // Use resource in wwwroot
 app.UseStaticFiles();

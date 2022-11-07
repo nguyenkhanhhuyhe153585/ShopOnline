@@ -46,7 +46,7 @@ namespace ShopOnline.Pages.Accounts
                 }
                 else
                 {
-                    if (account.Password.Equals(Account.Password))
+                    if (SessionUtils.PasswordCompare(Account.Password, account.Password))
                     {
                         HttpContext.Session.SetString("CustSession", JsonSerializer.Serialize(account));
                         HttpContext.Response.Cookies.Append("Token", SessionUtils.EncodeJWTToken(account));
@@ -55,7 +55,6 @@ namespace ShopOnline.Pages.Accounts
                         {
                             return Redirect("/admin/dashboard");
                         }
-
                         return Redirect("/index");
                     }
                     ViewData["msg"] = "Invalid Password";
@@ -64,6 +63,6 @@ namespace ShopOnline.Pages.Accounts
             }
             return Page();
         }
-       
+
     }
 }

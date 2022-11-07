@@ -47,7 +47,7 @@ namespace ShopOnline.Pages.Accounts.Cart
                 Customer = dBContext.Customers.Find(account.CustomerId);
             }
             orderDetailsCard = SessionUtils.GetCartInfo(HttpContext.Session);
-           
+
             ViewData["totalAmount"] = orderDetailsCard.Values.Sum(e => e.UnitPrice * e.Quantity);
             HttpContext.Session.SetString("Cart", JsonSerializer.Serialize(orderDetailsCard));
             return Page();
@@ -125,12 +125,15 @@ namespace ShopOnline.Pages.Accounts.Cart
                 HttpContext.Session.Remove("Cart");
                 await dBContext.SaveChangesAsync();
                 await signalrServer.Clients.All.SendAsync("LoadOrdersHist");
-                var file = GeneratePdfInvoice(order);
-                string body = new HTMLTemplate().MailConfrimOrder(order);
-                await Utils.Email("khanhhuy1110@gmail.com", body, new System.Net.Mail.Attachment(new MemoryStream(file), "Invoice.pdf"));
+                if (account != null)
+                {
+                    var file = GeneratePdfInvoice(order);
+                    string body = new HTMLTemplate().MailConfrimOrder(order);
+                    await Utils.Email(account.Email, "Mail Invoice", body, new System.Net.Mail.Attachment(new MemoryStream(file), "Invoice.pdf"));
+                }
                 return Page();
             }
-            ViewData["error-message"] = "Provide all required field.";       
+            ViewData["error-message"] = "Provide all required field.";
             return Page();
         }
 
@@ -142,7 +145,7 @@ namespace ShopOnline.Pages.Accounts.Cart
                 Orientation = Orientation.Portrait,
                 PaperSize = PaperKind.A4,
                 Margins = new MarginSettings { Top = 10 },
-                DocumentTitle = "PDF Report",             
+                DocumentTitle = "PDF Report",
             };
             var objectSettings = new ObjectSettings
             {
@@ -158,10 +161,10 @@ namespace ShopOnline.Pages.Accounts.Cart
                 Objects = { objectSettings }
             };
             return converter.Convert(pdf);
-           
+
             //return File(file, "application/pdf", "Invoice.pdf");
         }
 
-      
+
     }
 }

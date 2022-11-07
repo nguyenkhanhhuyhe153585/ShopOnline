@@ -1,9 +1,11 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using ShopOnline.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
+using BC = BCrypt.Net.BCrypt;
 
 namespace ShopOnline.Common
 {
@@ -62,7 +64,7 @@ namespace ShopOnline.Common
                 new Claim(JwtRegisteredClaimNames.Jti,
                 Guid.NewGuid().ToString())
              }),
-                Expires = DateTime.UtcNow.AddMinutes(5),
+                Expires = DateTime.UtcNow.AddMinutes(1),
                 SigningCredentials = new SigningCredentials
                 (new SymmetricSecurityKey(key),
                 SecurityAlgorithms.HmacSha512Signature)
@@ -91,6 +93,16 @@ namespace ShopOnline.Common
                 Dictionary<string, string> dicClaims = claims.Claims.ToDictionary(x => x.Type, x => x.Value);
                 return dicClaims;
             }
+        }
+
+        public static string PasswordHasher(string plainPassword)
+        {
+            return BC.HashPassword(plainPassword, BC.GenerateSalt(), false, BCrypt.Net.HashType.SHA256);
+        }
+
+        public static bool PasswordCompare(string plainPassword, string hashPassword)
+        {
+            return BC.Verify(plainPassword, hashPassword, false, BCrypt.Net.HashType.SHA256);
         }
     }
 }
