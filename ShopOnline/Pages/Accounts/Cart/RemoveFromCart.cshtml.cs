@@ -13,13 +13,13 @@ namespace ShopOnline.Pages.Accounts.Cart
 
         public IActionResult OnGet(int productId)
         {
-            orderDetailsCart = SessionUtils.GetCartInfo(HttpContext.Session);
+            orderDetailsCart = SessionUtils.GetCartInfo(HttpContext);
             
             if (orderDetailsCart.ContainsKey(productId))          
             {    
                 orderDetailsCart.Remove(productId);
             }
-            HttpContext.Session.SetString("Cart", JsonSerializer.Serialize(orderDetailsCart));
+            HttpContext.Response.Cookies.Append("Cart", JsonSerializer.Serialize(orderDetailsCart), new CookieOptions() { Expires = DateTime.Now.AddDays(1) });
             return RedirectToPage("Index");
         }
     }

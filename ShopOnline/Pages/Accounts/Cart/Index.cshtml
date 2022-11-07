@@ -1,7 +1,7 @@
 ﻿@page
 @model ShopOnline.Pages.Accounts.Cart.IndexModel
 @{
-    var orders = SessionUtils.GetCartInfo(HttpContext.Session);
+    var orders = SessionUtils.GetCartInfo(HttpContext);
 }
 
 <div id="cart">

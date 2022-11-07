@@ -35,7 +35,7 @@ namespace ShopOnline.Pages.Accounts.Cart
             {
                 return RedirectToPage("Index");
             }
-            orderDetailsCard = SessionUtils.GetCartInfo(HttpContext.Session);
+            orderDetailsCard = SessionUtils.GetCartInfo(HttpContext);
             Product productFromDB = dBContext.Products.Find(productId);
             if (productFromDB == null)
             {
@@ -57,7 +57,7 @@ namespace ShopOnline.Pages.Accounts.Cart
                 OrderDetail orderDetailFromCart = orderDetailsCard[productId];
                 orderDetailFromCart.Quantity++;
             }
-            HttpContext.Session.SetString("Cart", JsonSerializer.Serialize(orderDetailsCard));
+            HttpContext.Response.Cookies.Append("Cart", JsonSerializer.Serialize(orderDetailsCard), new CookieOptions() { Expires = DateTime.Now.AddDays(1) });
             if (isBuyNow)
                 return RedirectToPage("Index");
             else

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using ShopOnline.Common;
 using ShopOnline.Models;
@@ -33,12 +34,12 @@ namespace ShopOnline.Pages.Accounts
             return Page();
         }
 
-        [HttpPost]
         public IActionResult OnPost()
         {
             if (ModelState.IsValid)
             {
-                Account account = dBContext.Accounts.SingleOrDefault(e => e.Email.Equals(Account.Email));
+
+                Account account = dBContext.Accounts.Where(e => e.Customer.IsActive == true).SingleOrDefault(e => e.Email.Equals(Account.Email));
                 if (account == null)
                 {
                     ViewData["msg"] = "Account invalid. Try again";
@@ -48,14 +49,25 @@ namespace ShopOnline.Pages.Accounts
                 {
                     if (SessionUtils.PasswordCompare(Account.Password, account.Password))
                     {
-                        HttpContext.Session.SetString("CustSession", JsonSerializer.Serialize(account));
+
+                        // Add jwt to cookies
                         HttpContext.Response.Cookies.Append("Token", SessionUtils.EncodeJWTToken(account));
 
                         if (SessionUtils.isAdmin(account))
                         {
+                            HttpContext.Session.SetString("CustSession", JsonSerializer.Serialize(account));
                             return Redirect("/admin/dashboard");
                         }
-                        return Redirect("/index");
+                        else if (account.Customer?.IsActive == false)
+                        {
+                            ViewData["msg"] = "Invalid Password";
+                            return Page();
+                        }
+                        else
+                        {
+                            HttpContext.Session.SetString("CustSession", JsonSerializer.Serialize(account));
+                            return Redirect("/index");
+                        }
                     }
                     ViewData["msg"] = "Invalid Password";
                     return Page();

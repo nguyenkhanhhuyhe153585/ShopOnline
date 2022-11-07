@@ -3,6 +3,7 @@ using DinkToPdf.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using NPOI.SS.UserModel;
 using ShopOnline.Common;
 using ShopOnline.Models;
@@ -46,7 +47,7 @@ namespace ShopOnline.Pages.Accounts.Cart
             {
                 Customer = dBContext.Customers.Find(account.CustomerId);
             }
-            orderDetailsCard = SessionUtils.GetCartInfo(HttpContext.Session);
+            orderDetailsCard = SessionUtils.GetCartInfo(HttpContext);
 
             ViewData["totalAmount"] = orderDetailsCard.Values.Sum(e => e.UnitPrice * e.Quantity);
             HttpContext.Session.SetString("Cart", JsonSerializer.Serialize(orderDetailsCard));
@@ -58,7 +59,7 @@ namespace ShopOnline.Pages.Accounts.Cart
             ModelState.Remove("Customer.CustomerId");
             if (ModelState.IsValid)
             {
-                Dictionary<int, OrderDetail> cart = SessionUtils.GetCartInfo(HttpContext.Session);
+                Dictionary<int, OrderDetail> cart = SessionUtils.GetCartInfo(HttpContext);
                 if (cart.Count == 0)
                 {
                     ViewData["error-message"] = "Cart empty.";
@@ -97,7 +98,7 @@ namespace ShopOnline.Pages.Accounts.Cart
                 await dBContext.Orders.AddAsync(order);
                 await dBContext.SaveChangesAsync();
 
-                Order newOrder = dBContext.Orders.OrderByDescending(e => e.OrderId).Take(1).ToList()[0];
+                Order newOrder = dBContext.Orders.OrderByDescending(e => e.OrderId).Take(1).Include(e => e.Customer).ToList()[0];
 
                 dBContext.Products.Where(e => cart.Keys.Contains(e.ProductId)).ToList().ForEach(
                     e =>
@@ -122,13 +123,13 @@ namespace ShopOnline.Pages.Accounts.Cart
                 //});
 
                 ViewData["error-message"] = "Order success";
-                HttpContext.Session.Remove("Cart");
+                HttpContext.Response.Cookies.Delete("Cart");
                 await dBContext.SaveChangesAsync();
                 await signalrServer.Clients.All.SendAsync("LoadOrdersHist");
                 if (account != null)
                 {
                     var file = GeneratePdfInvoice(order);
-                    string body = new HTMLTemplate().MailConfrimOrder(order);
+                    string body = new HTMLTemplate().MailConfrimOrder(newOrder);
                     await Utils.Email(account.Email, "Mail Invoice", body, new System.Net.Mail.Attachment(new MemoryStream(file), "Invoice.pdf"));
                 }
                 return Page();
@@ -150,7 +151,7 @@ namespace ShopOnline.Pages.Accounts.Cart
             var objectSettings = new ObjectSettings
             {
                 PagesCount = true,
-                HtmlContent = Utils.GetHTMLOrderString(order),
+                HtmlContent = HTMLTemplate.GetHTMLOrderString(order),
                 WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = Path.Combine(Directory.GetCurrentDirectory(), "pdfassets", "styles.css") },
                 HeaderSettings = { FontName = "Arial", FontSize = 9, Right = "Page [page] of [toPage]", Line = true },
                 FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Report Footer" }

@@ -11,9 +11,9 @@ namespace ShopOnline.Common
 {
     public class SessionUtils
     {
-        public static Dictionary<int, OrderDetail> GetCartInfo(ISession session)
+        public static Dictionary<int, OrderDetail> GetCartInfo(HttpContext context)
         {
-            string cart = session.GetString("Cart");
+            string cart = context.Request.Cookies["Cart"];
             if (cart == null)
             {
                 return new Dictionary<int, OrderDetail>();

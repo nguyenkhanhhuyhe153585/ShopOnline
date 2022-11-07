@@ -28,7 +28,6 @@ namespace ShopOnline.Pages.Accounts
             if (account == null)
             {
                 ViewData["msg"] = "Email not exist. Try again.";
-
                 return Page();
             }
             string token = SessionUtils.EncodeJWTToken(account);
@@ -42,6 +41,7 @@ namespace ShopOnline.Pages.Accounts
             await Utils.Email(account.Email, "Reset Password",
                 new HTMLTemplate().MailResetPassword(account, urlBuilder.ToString())
                 , null);
+            ViewData["msg"] = "Mail sended!";
             return Page();
         }
     }

@@ -31,10 +31,10 @@ namespace ShopOnline.Filters
 
             try
             {
-                string tokenFromCookies = context.HttpContext.Request.Cookies["Token"].ToString();
-                var result = SessionUtils.DecodeJWTTokenGetName(tokenFromCookies);
-                Account account = db.Accounts.Find(int.Parse(result["Sub"]));
-                context.HttpContext.Session.SetString("CustSession", JsonSerializer.Serialize(account));
+                //string tokenFromCookies = context.HttpContext.Request.Cookies["Token"].ToString();
+                //var result = SessionUtils.DecodeJWTTokenGetName(tokenFromCookies);
+                //Account account = db.Accounts.Find(int.Parse(result["Sub"]));
+                //context.HttpContext.Session.SetString("CustSession", JsonSerializer.Serialize(account));
             }
             catch (Exception ex)
             {
