@@ -4,16 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using NPOI.SS.UserModel;
 using ShopOnline.Common;
 using ShopOnline.Models;
 using ShopOnline.SignalRLab;
-using Syncfusion.XlsIO;
-using System.Collections;
-using System.IO;
-using System.Text;
 using System.Text.Json;
-using static System.Net.WebRequestMethods;
 
 namespace ShopOnline.Pages.Accounts.Cart
 {
@@ -126,13 +120,14 @@ namespace ShopOnline.Pages.Accounts.Cart
                 HttpContext.Response.Cookies.Delete("Cart");
                 await dBContext.SaveChangesAsync();
                 await signalrServer.Clients.All.SendAsync("LoadOrdersHist");
+                var file = GeneratePdfInvoice(order);          
                 if (account != null)
-                {
-                    var file = GeneratePdfInvoice(order);
+                {               
                     string body = new HTMLTemplate().MailConfrimOrder(newOrder);
                     await Utils.Email(account.Email, "Mail Invoice", body, new System.Net.Mail.Attachment(new MemoryStream(file), "Invoice.pdf"));
                 }
-                return Page();
+                return File(file, "application/pdf", "Invoice.pdf");
+
             }
             ViewData["error-message"] = "Provide all required field.";
             return Page();

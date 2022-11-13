@@ -8,7 +8,7 @@
     <ul>
         <a href="~/admin/dashboard">
         <li>Dashboard</li></a>
-        <a href="~/admin/dashboard/orders">
+        <a href="~/admin/orders">
         <li>Orders</li></a>
         <a href="~/admin/products">
         <li>Products</li></a>
@@ -25,7 +25,7 @@
         <input type="submit" value="Search">
     </form>
     <div>
-        <table class="table">
+        <table class="table" id="orders">
             <thead>
                 <tr>
                     <th>
@@ -72,9 +72,7 @@
                             @Html.DisplayFor(modelItem => item.IsActive)
                         </td>
                         <td>
-                            <a asp-page="./Edit" asp-route-id="@item.CustomerId">Edit</a> |
                             <a asp-page="./Details" asp-route-id="@item.CustomerId">Details</a> |
-                            <a asp-page="./Delete" asp-route-id="@item.CustomerId">Delete</a>
                         </td>
                     </tr>
                 }

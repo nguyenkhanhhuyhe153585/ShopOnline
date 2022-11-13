@@ -25,9 +25,10 @@ namespace ShopOnline.Pages.Admin.Products
         }
 
 
-        public IActionResult OnGet()
+        public IActionResult OnGet(string search, int categoryId)
         {
-            var products = dBContext.Products.Include(e => e.Category).ToList();
+            var products = dBContext.Products.Where(e => ((categoryId == 0) ? true : e.CategoryId == categoryId)
+                    && ((search.Length == 0) ? true : e.ProductName.Contains(search))).OrderByDescending(e => e.ProductId).Include(e => e.Category).ToList();
 
             //Create new Excel Workbook
             var workbook = new HSSFWorkbook();

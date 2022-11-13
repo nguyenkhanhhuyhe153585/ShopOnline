@@ -18,9 +18,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages().AddRazorPagesOptions(o =>
 {
     o.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute());
-    //o.Conventions.AddFolderApplicationModelConvention("/accounts/profile", model => model.Filters.Add(new MyFilter(new PRN221DBContext())));
-    //o.Conventions.AddFolderApplicationModelConvention("/admin", model => model.Filters.Add(new MyFilter(new PRN221DBContext())));
-
+    o.Conventions.AddFolderApplicationModelConvention("/", model => model.Filters.Add(new MyFilter(new PRN221DBContext())));
+    o.Conventions.AddFolderApplicationModelConvention("/admin", model => model.Filters.Add(new AdminFilter()));
 });
 
 // Add session 30 phút hết hạn

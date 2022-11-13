@@ -13,6 +13,8 @@
         <li>Products</li></a>
         <a href="~/admin/customers">
         <li>Customers</li></a>
+                <a href="~/admin/employees">
+        <li>Employees</li></a>
     </ul>
 </div>
 <div id="content-right">
@@ -26,6 +28,7 @@
                     To: <input type="date" name="txtEndOrderDate" value="@ViewData["txtEndOrderDate"]" />
                     <input type="submit" value="Filter">
                 </form>
+                <a href="~/admin/orders/export?txtStartOrderDate=@ViewData["txtStartOrderDate"]&txtEndOrderDate=@ViewData["txtEndOrderDate"]">Export to .xlsx</a>
             </div>
             <div id="order-table">
                 <table id="orders">

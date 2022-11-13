@@ -31,7 +31,7 @@ namespace ShopOnline.Pages.Accounts
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(string token, string password)
+        public async Task<IActionResult> OnPostAsync(string token, string password, string confirmpassword)
         {
             ViewData["token"] = token;
             try
@@ -48,7 +48,7 @@ namespace ShopOnline.Pages.Accounts
                     ViewData["msg"] = "Password empty";
                     return Page();
                 }
-                account.Password = SessionUtils.PasswordHasher(password.Trim());
+                account.Password = SessionUtils.PasswordUtils.PasswordHasher(password.Trim());
                 db.Accounts.Update(account);
                 await db.SaveChangesAsync();
             }

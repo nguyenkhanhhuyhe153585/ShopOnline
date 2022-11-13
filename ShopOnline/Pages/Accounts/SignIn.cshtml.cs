@@ -38,8 +38,7 @@ namespace ShopOnline.Pages.Accounts
         {
             if (ModelState.IsValid)
             {
-
-                Account account = dBContext.Accounts.Where(e => e.Customer.IsActive == true).SingleOrDefault(e => e.Email.Equals(Account.Email));
+                Account account = dBContext.Accounts.SingleOrDefault(e => e.Email.Equals(Account.Email));
                 if (account == null)
                 {
                     ViewData["msg"] = "Account invalid. Try again";
@@ -47,15 +46,14 @@ namespace ShopOnline.Pages.Accounts
                 }
                 else
                 {
-                    if (SessionUtils.PasswordCompare(Account.Password, account.Password))
+                    if (SessionUtils.PasswordUtils.PasswordCompare(Account.Password, account.Password))
                     {
-
                         // Add jwt to cookies
-                        HttpContext.Response.Cookies.Append("Token", SessionUtils.EncodeJWTToken(account));
+                        
 
                         if (SessionUtils.isAdmin(account))
                         {
-                            HttpContext.Session.SetString("CustSession", JsonSerializer.Serialize(account));
+                            SessionUtils.AddCookies(Const.COOKIE_TOKEN, SessionUtils.EncodeJWTToken(account), Const.SESSION_TIMEOUT, HttpContext);
                             return Redirect("/admin/dashboard");
                         }
                         else if (account.Customer?.IsActive == false)
@@ -65,7 +63,7 @@ namespace ShopOnline.Pages.Accounts
                         }
                         else
                         {
-                            HttpContext.Session.SetString("CustSession", JsonSerializer.Serialize(account));
+                            SessionUtils.AddCookies(Const.COOKIE_TOKEN, SessionUtils.EncodeJWTToken(account), Const.SESSION_TIMEOUT, HttpContext);
                             return Redirect("/index");
                         }
                     }

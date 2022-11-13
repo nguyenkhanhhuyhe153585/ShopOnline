@@ -28,21 +28,20 @@ namespace ShopOnline.Filters
         public void OnPageHandlerExecuting(PageHandlerExecutingContext context)
 
         {
-
             try
             {
-                //string tokenFromCookies = context.HttpContext.Request.Cookies["Token"].ToString();
-                //var result = SessionUtils.DecodeJWTTokenGetName(tokenFromCookies);
-                //Account account = db.Accounts.Find(int.Parse(result["Sub"]));
-                //context.HttpContext.Session.SetString("CustSession", JsonSerializer.Serialize(account));
+                string tokenFromCookies = context.HttpContext.Request.Cookies[Const.COOKIE_TOKEN].ToString();
+                var result = SessionUtils.DecodeJWTTokenGetName(tokenFromCookies);
+                Account account = db.Accounts.Find(int.Parse(result[Const.JWT_KEY.SUB]));
+                context.HttpContext.Session.SetString(Const.ACCOUNT_SESSION, JsonSerializer.Serialize(account));
             }
             catch (Exception ex)
             {
-                //context.Result = new RedirectToRouteResult(
+                //context.Result = new RedirectResult(
                 //     "/errorpage?code=401&message=Unautorized"
-                //); 
+                //);
+                context.HttpContext.Session.Remove(Const.ACCOUNT_SESSION);
             }
-            //throw new NotImplementedException();
         }
 
         public void OnPageHandlerExecuted(PageHandlerExecutedContext context)

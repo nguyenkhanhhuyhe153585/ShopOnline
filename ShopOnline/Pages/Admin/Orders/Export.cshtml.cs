@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using NPOI.HSSF.UserModel;
+using ShopOnline.Common;
 using ShopOnline.Models;
 using ShopOnline.SignalRLab;
 
@@ -20,9 +21,20 @@ namespace ShopOnline.Pages.Admin.Orders
             this._env = _env;
             this.dBContext = dBContext;
         }
-        public IActionResult OnGet()
+        public IActionResult OnGet(DateTime? txtStartOrderDate, DateTime? txtEndOrderDate)
         {
-            var orders = dBContext.Orders.ToList();
+
+            if (txtStartOrderDate != null)
+            {
+                txtStartOrderDate = Utils.StartOfDay((DateTime)txtStartOrderDate);
+            }
+            if (txtEndOrderDate != null)
+            {
+                txtEndOrderDate = Utils.EndOfDay((DateTime)txtEndOrderDate);
+            }
+            var orders = dBContext.Orders.Where(e =>
+                    (txtStartOrderDate == null ? true : e.OrderDate >= txtStartOrderDate)
+                && (txtEndOrderDate == null ? true : e.OrderDate <= txtEndOrderDate)).OrderByDescending(e => e.OrderDate).ToList();
 
             //Create new Excel Workbook
             var workbook = new HSSFWorkbook();

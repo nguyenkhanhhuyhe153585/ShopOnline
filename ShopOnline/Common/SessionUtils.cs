@@ -11,6 +11,15 @@ namespace ShopOnline.Common
 {
     public class SessionUtils
     {
+        public static void AddCookies(string key, string value, int minute, HttpContext context)
+        {
+            CookieOptions options = new CookieOptions()
+            {
+                MaxAge = TimeSpan.FromMinutes(minute),
+            };
+            context.Response.Cookies.Append(key, value, options);
+        }
+
         public static Dictionary<int, OrderDetail> GetCartInfo(HttpContext context)
         {
             string cart = context.Request.Cookies["Cart"];
@@ -58,9 +67,9 @@ namespace ShopOnline.Common
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                new Claim("Id", Guid.NewGuid().ToString()),
-                new Claim("Sub", account.AccountId.ToString()),
-                new Claim("Email", account.Email),
+                new Claim(Const.JWT_KEY.ID, Guid.NewGuid().ToString()),
+                new Claim(Const.JWT_KEY.SUB, account.AccountId.ToString()),
+                new Claim(Const.JWT_KEY.EMAIL, account.Email),
                 new Claim(JwtRegisteredClaimNames.Jti,
                 Guid.NewGuid().ToString())
              }),
@@ -95,14 +104,18 @@ namespace ShopOnline.Common
             }
         }
 
-        public static string PasswordHasher(string plainPassword)
-        {
-            return BC.HashPassword(plainPassword, BC.GenerateSalt(), false, BCrypt.Net.HashType.SHA256);
-        }
 
-        public static bool PasswordCompare(string plainPassword, string hashPassword)
+        public static class PasswordUtils
         {
-            return BC.Verify(plainPassword, hashPassword, false, BCrypt.Net.HashType.SHA256);
+            public static string PasswordHasher(string plainPassword)
+            {
+                return BC.HashPassword(plainPassword, BC.GenerateSalt(), false, BCrypt.Net.HashType.SHA256);
+            }
+
+            public static bool PasswordCompare(string plainPassword, string hashPassword)
+            {
+                return BC.Verify(plainPassword, hashPassword, false, BCrypt.Net.HashType.SHA256);
+            }
         }
     }
 }

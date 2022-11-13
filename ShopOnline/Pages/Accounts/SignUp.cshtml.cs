@@ -57,7 +57,7 @@ namespace ShopOnline.Pages.Accounts
                 {
                     CustomerId = customer.CustomerId,
                     Email = Account.Email,
-                    Password = SessionUtils.PasswordHasher(Account.Password),
+                    Password = SessionUtils.PasswordUtils.PasswordHasher(Account.Password),
                     Role = 2
                 };
                 await dBContext.Accounts.AddAsync(account);

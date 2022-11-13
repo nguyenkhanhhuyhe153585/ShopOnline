@@ -13,6 +13,8 @@
         <li>Products</li></a>
         <a href="~/admin/customers">
         <li>Customers</li></a>
+        <a href="~/admin/employees">
+        <li>Employees</li></a>
     </ul>
 </div>
 <div id="content-right">
@@ -41,6 +43,20 @@
             </div>
             <div id="dashboard-2">
                 <div id="chart" style="text-align: center;">
+                    <form method="get" id="form-order-year">
+                        <select name="orderyear" onchange="document.getElementById('form-order-year').submit();">
+                            <option value="0">Current</option>
+                            @foreach(var year in Model.orderyearsList){
+                                if ((int)ViewData["year"] == year)
+                                {
+                                    <option value="@year" selected>@year</option>
+                                    continue;
+                                }
+                                <option value="@year">@year</option>
+                                
+                            }
+                        </select>
+                    </form>
                     <div id="chart1">
                         <h3>Statistic Orders (Month)</h3>
                         <canvas id="myChart1" style="width: 100%;"></canvas>

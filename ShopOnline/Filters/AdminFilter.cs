@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Filters;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using ShopOnline.Common;
 
 namespace ShopOnline.Filters
@@ -10,7 +11,9 @@ namespace ShopOnline.Filters
             //throw new NotImplementedException();
             if (!SessionUtils.isAdminSession(context.HttpContext.Session))
             {
-                //context.HttpContext.Response.Redirect("/errorpage?code=403&message=UnAuthozied");            
+                context.Result = new RedirectResult(
+                     "/errorpage?code=401&message=Unautorized"
+                );
             }
         }
 

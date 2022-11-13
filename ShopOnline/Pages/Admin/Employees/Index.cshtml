@@ -19,13 +19,13 @@
     </ul>
 </div>
 <div id="content-right">
-    <h1>Index</h1>
+    <h1>Employees</h1>
 
-    <p>
-        <a asp-page="Create">Create New</a>
-    </p>
     <div>
-        <table class="table">
+        <a asp-page="Create">Create New</a>
+    </div>
+    <div>
+        <table class="table" id="orders">
             <thead>
                 <tr>
                     <th>
@@ -85,7 +85,6 @@
                         </td>
                         <td>
                             <a asp-page="./Edit" asp-route-id="@item.EmployeeId">Edit</a> |
-                            <a asp-page="./Details" asp-route-id="@item.EmployeeId">Details</a> |
                             <a asp-page="./Delete" asp-route-id="@item.EmployeeId">Delete</a>
                         </td>
                     </tr>

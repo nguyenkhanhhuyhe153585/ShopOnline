@@ -29,7 +29,6 @@ namespace ShopOnline.Pages.Accounts.Profile
                 return RedirectToPage("/Index");
             }
             Customer = dBContext.Customers.Find(Account.CustomerId);
-
             return Page();
         }
     }
